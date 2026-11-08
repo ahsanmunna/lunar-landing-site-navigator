@@ -32,8 +32,8 @@ def test_spice_sub_points_check():
     assert sun_lon == pytest.approx(135.917, abs=0.05)
 
 
-def test_angular_radius_calculation():
-    """c) Angular radius test: Earth radius from the vector at a known distance equals asin(6371/d)."""
+def test_angular_radius_pure_formula():
+    """Pure-formula test: Earth and Sun radius from vector at known distance equals asin(R/d)."""
     # Test with known distance d = 384400 km
     d = 384400.0
     expected_deg = np.degrees(np.arcsin(EARTH_RADIUS_KM / d))
@@ -50,6 +50,28 @@ def test_angular_radius_calculation():
     d_sun = 1.496e8  # ~1 AU
     expected_sun_deg = np.degrees(np.arcsin(SUN_RADIUS_KM / d_sun))
     assert angular_radius_deg(SUN_RADIUS_KM, d_sun) == pytest.approx(expected_sun_deg, abs=1e-12)
+
+
+def test_angular_radius_calculation():
+    """Test angular radii from sun_earth_azel ephemeris simulation."""
+    res = sun_earth_azel(
+        lat=-86,
+        lon=2,
+        ground_height_m=5154,
+        observer_height_m=2,
+        start="2027-01-01",
+        days=30,
+        step_s=3600,
+    )
+
+    # Elementwise check against asin(6371 / earth_dist_km) in degrees
+    expected_earth_r = np.degrees(np.arcsin(6371.0 / res.earth_dist_km))
+    np.testing.assert_allclose(res.earth_r, expected_earth_r, atol=1e-9)
+
+    # Bounds checks
+    assert 0.89 <= res.earth_r.min() <= 0.91
+    assert 1.01 <= res.earth_r.max() <= 1.03
+    assert np.all((res.sun_r >= 0.269) & (res.sun_r <= 0.273))
 
 
 def test_moon_centered_raw_vectors():

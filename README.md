@@ -2,7 +2,7 @@
 
 A modular Python package developed for NASA Space Apps 2026 to analyze lunar south-pole landing sites. For any given site, `lunar_engine` computes:
 1. **Terrain Horizon**: 360-degree horizon profile using high-resolution LOLA 20 m DEM (`LDEM_80S_20MPP_ADJ.tiff`) with regional downsampled caching.
-2. **SPICE Ephemeris**: Apparent topocentric azimuth, elevation, and distance-derived angular radii for both the Sun and Earth over time in the `MOON_ME` frame.
+2. **SPICE Ephemeris**: Apparent topocentric azimuth, elevation, and distance-derived angular radii for both the Sun and Earth over time in the `MOON_ME` frame (Earth's angular radius is about 0.90-1.02 deg depending on the Earth-Moon distance).
 3. **Visibility & Illumination**: Visible fraction of the solar and terrestrial discs obscured by local terrain, average illumination, and longest communication blackout periods.
 
 ## Project Structure
