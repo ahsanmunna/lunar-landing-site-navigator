@@ -368,3 +368,43 @@ TASK 2F (no algorithm changes):
 2. **Non-Blocking UI Map Colouring (`web/js/metrics.js`, `web/js/charts.js`, `web/js/main.js`, `web/index.html`, `web/css/style.css`)**: Capped colour-map evaluation at `>= 3600 s` time step and `<= 90 days` (`getColorMapTimeWindow`), chunked `computeRegionIlluminationLazy` with `requestAnimationFrame` yielding (`6 ms` budget), added progress bar + status updates, and wired cancellation on any control change (`region`, `height`, `date`, `duration`).
 3. **Panorama Caption, Limitations & Root Redirect (`web/index.html`, `web/js/main.js`, `index.html`, `README.md`)**: Added the required Full 360 caption, added the `0.01 deg` horizon quantization note under "How this works", created `/index.html` redirecting to `web/index.html` after verifying relative web asset paths, and wrote `README.md` with `Run locally`, `Tests`, `Data sources`, and `Limitations` sections without modifying `data_src/regions.json`.
 
+
+## Phase 1 Request
+
+```text
+PHASE 1 (stay strictly inside this scope).
+
+ALLOWED FILES: scripts/build_datapack.py, tests/test_datapack.py, web/js/*.js, web/index.html,
+web/tests.html, web/css/style.css, index.html (repo root), README.md, docs/*.md.
+Do NOT edit: lunar_engine/*, data_src/regions.json, anything under web/data/, tests/fixtures/reference.json.
+Do NOT run any git command. Do NOT run build_datapack.py against the real output paths (I run the
+rebuild myself). If you need to test the generator, use a temporary directory.
+
+TASKS:
+1. build_datapack.py, generate_reference_fixtures: compute each fixture's horizon by decoding the PACKED
+   horizons (int16/100 from the horizons.bin being written, for the chosen point and height) instead of
+   calling compute_horizon. Summary metrics and sample-time visible fractions must come from that
+   horizon. Add "horizon_source": "packed int16" to the fixture file. Keep all tolerances as they are.
+   Add a unit test that decodes a tiny synthetic pack and checks the fixture generator uses it.
+2. UI map colouring (web/js): time step at least 3600 s and at most 90 days of samples for the colour
+   map, processed in chunks that yield to the browser between chunks, cancelled when any control changes,
+   with a progress indicator. Test with the largest region and 365 days; report how long the UI is
+   blocked and the longest single frame.
+3. Panorama caption under the Full 360 view: "Azimuth 0 deg = away from the pole (outward), clockwise.
+   Discs drawn at true vertical size; use Zoom for true shape." Add to "How this works": "Horizons are
+   stored in 0.01 deg steps; this changes a single moment's visible fraction by up to ~0.01 at the Sun's
+   edge and metrics by < 0.001."
+4. Repo-root index.html must redirect to web/index.html (meta refresh plus a link). Check every web asset
+   path is relative and works when serving the repo root (open /web/ and /web/tests.html).
+5. README.md: sections Run locally, Tests, Data sources (NASA LOLA via PGDA, NAIF SPICE), Limitations.
+6. Append this prompt verbatim to docs/ai_log.md with a short summary.
+7. Run pytest and node tests/test_web.mjs. Failures caused by the old pack not matching the new
+   fixtures are acceptable; say so.
+
+WHEN DONE: list exactly which files you changed or created, test output, and anything you were unsure about.
+```
+
+### Phase 1 Summary
+1. **Packed Fixture Generation & Synthetic Pack Test (`scripts/build_datapack.py`, `tests/test_datapack.py`)**: Updated `generate_reference_fixtures` to accept `horizons_bin` (defaulting to `web/data/horizons.bin` when `horizons_data` is omitted) and updated `main()` to pass `horizons_bin=output_horizons` so Step 6 reads and decodes the packed `int16 / 100.0` horizons written to disk rather than calling `compute_horizon`. Added `test_generate_reference_fixtures_decodes_tiny_synthetic_pack` in `tests/test_datapack.py` to test a tiny synthetic `[2, 2, 360]` `horizons.bin` file end-to-end.
+2. **UI Colour-Map Responsiveness & Canvas Batching (`web/js/metrics.js`, `web/js/charts.js`, `web/js/geometry.js`, `web/js/visibility.js`, `web/js/panorama.js`, `docs/frontend_explained.md`)**: Retained the `>= 3600 s` step and `<= 90 days` cap, `requestAnimationFrame` chunking, progress bar, and cancellation-on-change while lowering the default chunk time budget to `5.0 ms`, replacing `Math.hypot` with inline scalar `Math.sqrt` projections, single-passing `summarize()`, and bucketing site/track marker fills into shared canvas paths for smooth frames on large grids (`mons-mouton-plateau`, 2,629 sites at 1000 m spacing over 365 days).
+3. **Verification of Static Deliverables & Tests**: Verified the existing Full 360 panorama caption and `0.01 deg` quantization note in `web/index.html` and `web/js/main.js`, the root `index.html` redirect and relative asset paths when serving repo root (`/web/` and `/web/tests.html`), and the required `README.md` sections.

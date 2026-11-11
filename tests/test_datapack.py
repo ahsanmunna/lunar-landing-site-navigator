@@ -641,3 +641,146 @@ def test_select_darkest_brightest_and_generate_fixtures(tmp_path, capsys, monkey
     mal_5m = next(c for c in fixtures if c["point_id"] == "malapert-massif-c" and c["observer_height_m"] == 5.0)
     assert mal_1m["summary"]["horizon_min"] == pytest.approx(1.23)
     assert mal_5m["summary"]["horizon_min"] == pytest.approx(-0.45)
+
+
+def test_generate_reference_fixtures_decodes_tiny_synthetic_pack(tmp_path, monkeypatch):
+    """Phase 1: decode a tiny synthetic packed horizons.bin and verify generate_reference_fixtures uses it."""
+    from lunar_engine.ephemeris import sun_earth_azel
+    from lunar_engine.visibility import summarize, visible_fraction
+
+    pack_dir = tmp_path / "synthetic_pack"
+    pack_dir.mkdir()
+    heights = [1.0, 5.0]
+    points = [
+        {
+            "id": "synth-a-c",
+            "region": "synth-a",
+            "x_m": 0.0,
+            "y_m": 121200.0,
+            "lat": -86.0,
+            "lon": 2.7,
+            "ground_height_m": 5140.0,
+            "slope_deg": 2.0,
+            "index": 0,
+        },
+        {
+            "id": "synth-b-c",
+            "region": "synth-b",
+            "x_m": 5000.0,
+            "y_m": 115000.0,
+            "lat": -86.2,
+            "lon": 5.0,
+            "ground_height_m": -1000.0,
+            "slope_deg": 4.0,
+            "index": 1,
+        },
+    ]
+
+    # Build tiny synthetic [2, 2, 360] int16 horizons.bin with 0.01 deg quantization and azimuth variation
+    az = np.arange(360, dtype=np.float64)
+    hor_packed = np.empty((len(points), len(heights), 360), dtype=np.int16)
+    hor_packed[0, 0, :] = np.round((-50.0 + 180.0 * np.sin(np.radians(az)))).astype(np.int16)
+    hor_packed[0, 1, :] = -75   # -0.75 deg
+    hor_packed[1, 0, :] = 6000  # +60.00 deg (dark)
+    hor_packed[1, 1, :] = -1000 # -10.00 deg (bright)
+
+    horizons_bin = pack_dir / "horizons.bin"
+    hor_packed.astype("<i2").tofile(horizons_bin)
+    manifest = {
+        "observer_heights_m": heights,
+        "horizons": {"file": "horizons.bin", "scale": 0.01, "nodata": -32768},
+        "points": points,
+    }
+    (pack_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    def _forbid_compute_horizon(*args, **kwargs):
+        raise AssertionError("generate_reference_fixtures must decode packed horizons, not call compute_horizon")
+
+    monkeypatch.setattr("scripts.build_datapack.compute_horizon", _forbid_compute_horizon)
+    monkeypatch.setattr("lunar_engine.horizon.compute_horizon", _forbid_compute_horizon)
+
+    out_json = tmp_path / "synthetic_reference.json"
+    generate_reference_fixtures(
+        points=points,
+        output_json=out_json,
+        observer_heights=heights,
+        horizons_bin=horizons_bin,
+    )
+
+    fixtures = json.loads(out_json.read_text(encoding="utf-8"))
+    assert len(fixtures) == len(points) * len(heights)
+
+    # Independently decode horizons.bin and verify every metric & sample-time visible fraction matches
+    decoded_pack = (
+        np.fromfile(horizons_bin, dtype="<i2")
+        .reshape((len(points), len(heights), 360))
+        .astype(np.float64)
+        / 100.0
+    )
+    pt_by_id = {pt["id"]: pt for pt in points}
+
+    for case in fixtures:
+        assert case["horizon_source"] == "packed int16"
+        pt = pt_by_id[case["point_id"]]
+        h = float(case["observer_height_m"])
+        h_idx = heights.index(h)
+        hor = decoded_pack[pt["index"], h_idx, :]
+
+        ephem = sun_earth_azel(
+            lat=pt["lat"],
+            lon=pt["lon"],
+            ground_height_m=pt["ground_height_m"],
+            observer_height_m=h,
+            start=case["start"],
+            days=case["days"],
+            step_s=case["step_s"],
+        )
+        expected_summary = summarize(
+            hor=hor,
+            ground_height_m=pt["ground_height_m"],
+            sun=ephem.sun,
+            sun_r=ephem.sun_r,
+            earth=ephem.earth,
+            earth_r=ephem.earth_r,
+            lat=pt["lat"],
+            lon=pt["lon"],
+            start=case["start"],
+            days=case["days"],
+            observer_height_m=h,
+            step_s=case["step_s"],
+        )
+        for key in (
+            "illumination_avg_fraction",
+            "sun_any_pct",
+            "sun_longest_dark_h",
+            "earth_any_pct",
+            "earth_mostly_pct",
+            "earth_longest_blackout_h",
+            "horizon_min",
+            "horizon_max",
+        ):
+            assert case["summary"][key] == pytest.approx(expected_summary[key], abs=1e-12)
+
+        sv = visible_fraction(ephem.sun, ephem.sun_r, hor)
+        ev = visible_fraction(ephem.earth, ephem.earth_r, hor)
+        for sample in case["sample_times"]:
+            s_idx = sample["index"]
+            assert sample["sun_visible_fraction"] == pytest.approx(float(sv[s_idx]), abs=1e-6)
+            assert sample["earth_visible_fraction"] == pytest.approx(float(ev[s_idx]), abs=1e-6)
+
+    # Flip one point's packed horizon in horizons.bin and confirm fixtures change accordingly
+    orig_case = next(c for c in fixtures if c["point_id"] == "synth-a-c" and c["observer_height_m"] == 1.0)
+    hor_packed[0, 0, :] = 6000
+    hor_packed.astype("<i2").tofile(horizons_bin)
+    generate_reference_fixtures(
+        points=points,
+        output_json=out_json,
+        observer_heights=heights,
+        horizons_bin=horizons_bin,
+    )
+    updated_fixtures = json.loads(out_json.read_text(encoding="utf-8"))
+    upd_case = next(c for c in updated_fixtures if c["point_id"] == "synth-a-c" and c["observer_height_m"] == 1.0)
+    assert orig_case["summary"]["illumination_avg_fraction"] > 0.1
+    assert upd_case["summary"]["illumination_avg_fraction"] == 0.0
+    assert upd_case["summary"]["horizon_min"] == pytest.approx(60.0)
+    assert all(s["sun_visible_fraction"] == 0.0 for s in upd_case["sample_times"])

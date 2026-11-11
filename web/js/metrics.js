@@ -4,9 +4,9 @@
  */
 
 import {
+  RAD_TO_DEG,
   siteLocalFrame,
   sitePositionKm,
-  projectTopocentricInto,
   computeSunEarthAzEl,
 } from "./geometry.js";
 import {
@@ -97,7 +97,7 @@ const VIRIDIS_STOPS = [
   [253, 231, 37],
 ];
 
-const VIRIDIS_LUT = Array.from({ length: 256 }, (_, k) => {
+export const VIRIDIS_LUT = Array.from({ length: 256 }, (_, k) => {
   const t = k / 255;
   const scaled = t * (VIRIDIS_STOPS.length - 1);
   const idx = Math.floor(scaled);
@@ -111,11 +111,18 @@ const VIRIDIS_LUT = Array.from({ length: 256 }, (_, k) => {
 });
 
 /**
+ * Map t in [0, 1] to a Viridis LUT index [0..255].
+ */
+export function viridisIndex(t) {
+  const clamped = Math.max(0.0, Math.min(1.0, t));
+  return Math.round(clamped * 255);
+}
+
+/**
  * Map t in [0, 1] to a colour-blind-safe Viridis RGB CSS string.
  */
 export function viridisColor(t) {
-  const clamped = Math.max(0.0, Math.min(1.0, t));
-  return VIRIDIS_LUT[Math.round(clamped * 255)];
+  return VIRIDIS_LUT[viridisIndex(t)];
 }
 
 /**
@@ -201,7 +208,7 @@ export function computePointIlluminationFraction({
   const sunRadiusKm = manifest.constants.sun_radius_km;
   const azStepDeg = manifest.azStepDeg;
 
-  const frame = siteLocalFrame(point.lat, point.lon);
+  const { up, east, north } = siteLocalFrame(point.lat, point.lon);
   const rSite = sitePositionKm(
     point.lat,
     point.lon,
@@ -210,25 +217,37 @@ export function computePointIlluminationFraction({
     moonRadiusM,
   );
 
+  const rx = rSite[0], ry = rSite[1], rz = rSite[2];
+  const u0 = up[0], u1 = up[1], u2 = up[2];
+  const e0 = east[0], e1 = east[1], e2 = east[2];
+  const n0 = north[0], n1 = north[1], n2 = north[2];
+
   const vecs = ephem.data;
   const { startIdx, nSteps, stride } = timeWindow;
-  const tmp = new Float64Array(3);
 
   let svSum = 0.0;
   for (let k = 0; k < nSteps; k++) {
     const base = (startIdx + k * stride) * 6;
-    projectTopocentricInto(
-      vecs[base],
-      vecs[base + 1],
-      vecs[base + 2],
-      rSite,
-      frame,
-      sunRadiusKm,
-      tmp,
-    );
-    const hz = interpHorizon(hor, tmp[0], azStepDeg);
-    const t = (tmp[1] - hz) / tmp[2];
-    svSum += discVisibleFraction(t);
+    const vx = vecs[base] - rx;
+    const vy = vecs[base + 1] - ry;
+    const vz = vecs[base + 2] - rz;
+    const invD = 1.0 / Math.sqrt(vx * vx + vy * vy + vz * vz);
+    const ux = vx * invD;
+    const uy = vy * invD;
+    const uz = vz * invD;
+
+    const dotE = ux * e0 + uy * e1 + uz * e2;
+    const dotN = ux * n0 + uy * n1 + uz * n2;
+    const dotU = ux * u0 + uy * u1 + uz * u2;
+
+    let az = (Math.atan2(dotE, dotN) * RAD_TO_DEG) % 360.0;
+    if (az < 0.0) az += 360.0;
+    if (az >= 360.0) az -= 360.0;
+
+    const el = Math.asin(Math.max(-1.0, Math.min(1.0, dotU))) * RAD_TO_DEG;
+    const rDeg = Math.asin(Math.min(1.0, sunRadiusKm * invD)) * RAD_TO_DEG;
+    const hz = interpHorizon(hor, az, azStepDeg);
+    svSum += discVisibleFraction((el - hz) / rDeg);
   }
 
   return nSteps > 0 ? svSum / nSteps : 0.0;
@@ -251,7 +270,7 @@ export function computeRegionIlluminationLazy({
   cache,
   onBatch,
   onDone,
-  chunkBudgetMs = 6.0,
+  chunkBudgetMs = 5.0,
   maxBatchSize = 48,
 }) {
   const cacheKey = `${regionId}|${heightIdx}|${timeWindow.startIdx}|${timeWindow.nSteps}|${timeWindow.stride}`;

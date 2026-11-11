@@ -565,6 +565,7 @@ def generate_reference_fixtures(
     output_json: Path,
     horizons_data: Optional[np.ndarray] = None,
     observer_heights: Optional[List[float]] = None,
+    horizons_bin: Optional[Path] = None,
 ) -> None:
     """Generate tests/fixtures/reference.json with 12 validation cases for JS port."""
     print(f"\n[Step 6] Generating reference test fixtures with 12 cases...")
@@ -572,9 +573,9 @@ def generate_reference_fixtures(
 
     heights = list(observer_heights) if observer_heights is not None else [1.0, 5.0]
     if horizons_data is None:
-        horizons_path = Path("web/data/horizons.bin")
+        horizons_path = Path(horizons_bin) if horizons_bin is not None else Path("web/data/horizons.bin")
         if not horizons_path.exists():
-            raise ValueError("horizons_data must be provided or web/data/horizons.bin must exist.")
+            raise ValueError(f"horizons_data must be provided or {horizons_path} must exist.")
         horizons_data = np.fromfile(horizons_path, dtype="<i2").reshape((len(points), len(heights), 360))
 
     # Point index lookup by id
@@ -861,12 +862,12 @@ def main(argv: Optional[List[str]] = None):
         json.dump(manifest, f, indent=2)
     print(f"\n[Step 4b] Wrote manifest to: {output_manifest} ({output_manifest.stat().st_size:,} bytes)")
 
-    # Step 6: Reference fixtures
+    # Step 6: Reference fixtures (decode directly from the horizons.bin written in Step 2)
     generate_reference_fixtures(
         points,
         fixtures_file,
-        horizons_data=horizons_data,
         observer_heights=observer_heights,
+        horizons_bin=output_horizons,
     )
 
     # Size verification

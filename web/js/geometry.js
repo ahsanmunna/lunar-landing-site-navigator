@@ -93,7 +93,7 @@ export function projectTopocentricInto(bx, by, bz, rSite, frame, radiusKm, out) 
   const vx = bx - rSite[0];
   const vy = by - rSite[1];
   const vz = bz - rSite[2];
-  const distKm = Math.hypot(vx, vy, vz);
+  const distKm = Math.sqrt(vx * vx + vy * vy + vz * vz);
   const invD = 1.0 / distKm;
   const ux = vx * invD;
   const uy = vy * invD;
@@ -130,21 +130,36 @@ function fillBodyTrack({
   rOut,
 }) {
   const bodyOffset = bodyIdx * 3;
-  const tmp = new Float64Array(3);
+  const rx = rSite[0];
+  const ry = rSite[1];
+  const rz = rSite[2];
+  const { up, east, north } = frame;
+  const u0 = up[0], u1 = up[1], u2 = up[2];
+  const e0 = east[0], e1 = east[1], e2 = east[2];
+  const n0 = north[0], n1 = north[1], n2 = north[2];
+
   for (let k = 0; k < nSteps; k++) {
     const base = (startIdx + k * stride) * 6 + bodyOffset;
-    projectTopocentricInto(
-      vecs[base],
-      vecs[base + 1],
-      vecs[base + 2],
-      rSite,
-      frame,
-      radiusKm,
-      tmp,
-    );
-    azOut[k] = tmp[0];
-    elOut[k] = tmp[1];
-    rOut[k] = tmp[2];
+    const vx = vecs[base] - rx;
+    const vy = vecs[base + 1] - ry;
+    const vz = vecs[base + 2] - rz;
+    const distKm = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    const invD = 1.0 / distKm;
+    const ux = vx * invD;
+    const uy = vy * invD;
+    const uz = vz * invD;
+
+    const dotE = ux * e0 + uy * e1 + uz * e2;
+    const dotN = ux * n0 + uy * n1 + uz * n2;
+    const dotU = ux * u0 + uy * u1 + uz * u2;
+
+    let az = (Math.atan2(dotE, dotN) * RAD_TO_DEG) % 360.0;
+    if (az < 0.0) az += 360.0;
+    if (az >= 360.0) az -= 360.0;
+
+    azOut[k] = az;
+    elOut[k] = Math.asin(Math.max(-1.0, Math.min(1.0, dotU))) * RAD_TO_DEG;
+    rOut[k] = Math.asin(Math.min(1.0, radiusKm * invD)) * RAD_TO_DEG;
   }
 }
 

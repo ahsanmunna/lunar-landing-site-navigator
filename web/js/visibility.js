@@ -98,18 +98,31 @@ export function summarize({
   let sunAnyCount = 0;
   let earthAnyCount = 0;
   let earthMostlyCount = 0;
+  let sunLongestDarkSteps = 0;
+  let sunCurDark = 0;
+  let earthLongestBlackoutSteps = 0;
+  let earthCurBlackout = 0;
 
   for (let i = 0; i < n; i++) {
     const s = sv[i];
     const e = ev[i];
     svSum += s;
     if (s > 0.0) sunAnyCount += 1;
+    if (s === 0.0) {
+      sunCurDark += 1;
+      if (sunCurDark > sunLongestDarkSteps) sunLongestDarkSteps = sunCurDark;
+    } else {
+      sunCurDark = 0;
+    }
     if (e > 0.0) earthAnyCount += 1;
     if (e > 0.5) earthMostlyCount += 1;
+    if (e === 0.0) {
+      earthCurBlackout += 1;
+      if (earthCurBlackout > earthLongestBlackoutSteps) earthLongestBlackoutSteps = earthCurBlackout;
+    } else {
+      earthCurBlackout = 0;
+    }
   }
-
-  const sunLongestDarkSteps = longestRun(sv, (v) => v === 0.0);
-  const earthLongestBlackoutSteps = longestRun(ev, (v) => v === 0.0);
 
   let horMin = Infinity;
   let horMax = -Infinity;

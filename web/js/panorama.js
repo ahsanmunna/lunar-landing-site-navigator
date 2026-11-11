@@ -276,15 +276,17 @@ export function createPanoramaRenderer(canvas) {
       const drawTrackDots = (azArr, elArr, color, radiusPx) => {
         targetCtx.fillStyle = color;
         const stride = Math.max(1, Math.ceil(azArr.length / 1400));
+        const twoPi = Math.PI * 2;
+        targetCtx.beginPath();
         for (let i = 0; i < azArr.length; i += stride) {
           const x = azToX(azArr[i]);
           const y = elToY(elArr[i]);
           if (x < margin.left - 4 || x > margin.left + plotW + 4) continue;
           if (y < margin.top - 4 || y > margin.top + plotH + 4) continue;
-          targetCtx.beginPath();
-          targetCtx.arc(x, y, radiusPx, 0, Math.PI * 2);
-          targetCtx.fill();
+          targetCtx.moveTo(x + radiusPx, y);
+          targetCtx.arc(x, y, radiusPx, 0, twoPi);
         }
+        targetCtx.fill();
       };
 
       // Faint dotted tracks in sky

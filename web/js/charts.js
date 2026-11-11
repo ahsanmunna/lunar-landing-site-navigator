@@ -5,7 +5,7 @@
  */
 
 import { formatUtc } from "./data.js";
-import { viridisColor } from "./metrics.js";
+import { VIRIDIS_LUT, viridisIndex } from "./metrics.js";
 import { getCanvasPalette } from "./panorama.js";
 
 /**
@@ -22,6 +22,13 @@ export function createSitePicker({ canvas, tooltipEl, onSelectPoint }) {
     gridSpacingM: 500,
     hoverPoint: null,
   };
+
+  // Pre-allocated colour buckets for fast chunked rendering of large regions (<= 256 fill paths)
+  const bucketsX = Array.from({ length: 256 }, () => []);
+  const bucketsY = Array.from({ length: 256 }, () => []);
+  const activeBuckets = [];
+  const strokedX = [];
+  const strokedY = [];
 
   function getGeometry() {
     const rect = canvas.getBoundingClientRect();
@@ -133,18 +140,56 @@ export function createSitePicker({ canvas, tooltipEl, onSelectPoint }) {
       ctx.stroke();
     }
 
-    // Draw computed Viridis dots
+    // Draw computed Viridis dots batched by LUT colour index + one combined stroke
     if (illumMap && illumMap.size > 0) {
+      for (let b = 0; b < activeBuckets.length; b++) {
+        const idx = activeBuckets[b];
+        bucketsX[idx].length = 0;
+        bucketsY[idx].length = 0;
+      }
+      activeBuckets.length = 0;
+      strokedX.length = 0;
+      strokedY.length = 0;
+
       for (let i = 0; i < state.points.length; i++) {
         const pt = state.points[i];
         const val = illumMap.get(pt.id);
         if (val === undefined) continue;
         const x = (pt.x_m - xMin) * scaleX;
         const y = (yMax - pt.y_m) * scaleY;
+        const cIdx = viridisIndex(val);
+        if (bucketsX[cIdx].length === 0) {
+          activeBuckets.push(cIdx);
+        }
+        bucketsX[cIdx].push(x);
+        bucketsY[cIdx].push(y);
+        strokedX.push(x);
+        strokedY.push(y);
+      }
+
+      for (let b = 0; b < activeBuckets.length; b++) {
+        const cIdx = activeBuckets[b];
+        const bx = bucketsX[cIdx];
+        const by = bucketsY[cIdx];
         ctx.beginPath();
-        ctx.arc(x, y, dotRadius, 0, twoPi);
-        ctx.fillStyle = viridisColor(val);
+        for (let j = 0; j < bx.length; j++) {
+          const x = bx[j];
+          const y = by[j];
+          ctx.moveTo(x + dotRadius, y);
+          ctx.arc(x, y, dotRadius, 0, twoPi);
+        }
+        ctx.fillStyle = VIRIDIS_LUT[cIdx];
         ctx.fill();
+      }
+
+      if (strokedX.length > 0) {
+        ctx.beginPath();
+        for (let j = 0; j < strokedX.length; j++) {
+          const x = strokedX[j];
+          const y = strokedY[j];
+          ctx.moveTo(x + dotRadius, y);
+          ctx.arc(x, y, dotRadius, 0, twoPi);
+        }
         ctx.stroke();
       }
     }

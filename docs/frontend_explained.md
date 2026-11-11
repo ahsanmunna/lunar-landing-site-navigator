@@ -12,7 +12,7 @@ If you are used to Python (`numpy`, `matplotlib`, CLI scripts):
 - **Binary buffers ≈ NumPy `.fromfile()`**: `fetch()` downloads `ephem.bin` and `horizons.bin` as raw `ArrayBuffer` byte blocks. We wrap them in `Float32Array` and `Int16Array` views (just like `np.fromfile(..., dtype="<f4")` and `dtype="<i2"`).
 - **DOM ≈ `print()` / HTML output**: Instead of printing text, `main.js` and `compare.js` update HTML elements (`document.getElementById(...)`) by setting `.textContent` or building table rows.
 - **Canvas 2D ≈ `matplotlib` figure**: `<canvas>` is a blank pixel surface. In `panorama.js` and `charts.js`, we clear the canvas and draw polygons, circles, and text onto `ctx = canvas.getContext("2d")`.
-- **Event loop & non-blocking chunks**: JavaScript runs UI rendering and computation on one main thread. Computing illumination for ~200 grid sites over 365 days (`~7 million` steps) in a single loop would freeze button clicks, so `metrics.js` runs small batches separated by `setTimeout(step, 0)` so the browser stays responsive.
+- **Event loop & non-blocking chunks**: JavaScript runs UI rendering and computation on one main thread. Computing illumination for hundreds or thousands of grid sites over up to 90 days (`>= 3600 s` step) in a single loop would freeze button clicks, so `metrics.js` processes sites in timed chunks (`5 ms` budget) scheduled with `requestAnimationFrame` (falling back to `setTimeout(..., 0)` when RAF is unavailable) so the browser stays responsive, and `charts.js` batches site markers by colour bucket.
 
 ---
 
@@ -112,8 +112,8 @@ web/data/horizons.bin   ──┘        │
   - `METRIC_DEFINITIONS`, `EARTH_VISIBILITY_NOTE`, `DURATION_OPTIONS`.
   - `viridisColor(t)`: Maps `0..1` illumination to a perceptual colour-blind-safe RGB colour.
   - `evaluateSite(...)`: Runs `geometry.js` + `visibility.js` for the active site.
-  - `computePointIlluminationFraction(...)`: Allocation-free Sun-only illumination calculation used when scanning ~200 points in a region.
-  - `computeRegionIlluminationLazy(...)`: Computes grid-point illumination asynchronously in small chunks, caching by `(region, height, start, steps)`.
+  - `computePointIlluminationFraction(...)`: Allocation-free Sun-only illumination calculation used when scanning grid points across a region.
+  - `computeRegionIlluminationLazy(...)`: Computes grid-point illumination asynchronously in `requestAnimationFrame`-paced chunks (`chunkBudgetMs = 5.0`), caching by `(region, height, start, steps)`.
 
 ### `web/js/panorama.js`
 - **What it does**: Canvas 2D horizon panorama renderer.
