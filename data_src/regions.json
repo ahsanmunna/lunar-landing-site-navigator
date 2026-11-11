@@ -2,15 +2,15 @@
   {
     "id": "peak-near-cabeus-b",
     "name": "Peak near Cabeus B",
-    "center_x_m": -190854.34,
-    "center_y_m": 65681.32,
-    "center_lat": -83.351212,
-    "center_lon": -71.009421,
-    "ground_height_m": 724.79,
+    "center_x_m": -169599.5,
+    "center_y_m": 71774.18,
+    "center_lat": -83.932414,
+    "center_lon": -67.062012,
+    "ground_height_m": 1335.11,
     "radius_km": 11,
     "source": "approximate; centre placed in pick_regions.py from box positions measured on an annotated screenshot of NASA's Artemis III candidate-region map; not surveyed",
     "picked_by": "pick_regions.py",
-    "picked_utc": "2026-11-11T16:23:38Z"
+    "picked_utc": "2026-11-11T17:16:25Z"
   },
   {
     "id": "haworth",
@@ -67,15 +67,15 @@
   {
     "id": "nobile-rim-1",
     "name": "Nobile Rim 1",
-    "center_x_m": 93038.25,
-    "center_y_m": 121373.16,
-    "center_lat": -84.959947,
-    "center_lon": 37.471867,
-    "ground_height_m": 6567.92,
+    "center_x_m": 88429.35,
+    "center_y_m": 110625.12,
+    "center_lat": -85.332087,
+    "center_lon": 38.63746,
+    "ground_height_m": 5254.14,
     "radius_km": 11,
     "source": "approximate; centre placed in pick_regions.py from box positions measured on an annotated screenshot of NASA's Artemis III candidate-region map; not surveyed",
     "picked_by": "pick_regions.py",
-    "picked_utc": "2026-11-11T16:24:36Z"
+    "picked_utc": "2026-11-11T17:17:10Z"
   },
   {
     "id": "nobile-rim-2",
