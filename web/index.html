@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lunar Landing Site Navigator — Artemis III South Pole Explorer</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <div>
+        <h1 class="site-title">Lunar Landing Site Navigator</h1>
+        <p class="site-subtitle">
+          South Polar terrain horizons, solar illumination, and geometric Earth line of sight (2027–2029)
+        </p>
+      </div>
+      <nav class="header-links" aria-label="Secondary links">
+        <a href="#how-this-works">How this works</a>
+        <a href="tests.html">Verification suite</a>
+      </nav>
+    </header>
+
+    <section id="loading-banner" class="status-card" aria-live="polite">
+      <strong>Loading lunar terrain and ephemeris data pack…</strong>
+      <p id="loading-text" class="panel-sub">Initializing…</p>
+      <div class="progress-track" role="progressbar" aria-label="Data loading progress">
+        <div id="loading-bar" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <section id="error-banner" class="status-card error-card" role="alert" hidden>
+      <h2>Unable to load data pack</h2>
+      <p id="error-message"></p>
+      <p class="panel-sub">
+        Serve this folder over HTTP rather than opening via <code>file://</code>:
+        <code>cd web &amp;&amp; python -m http.server 8000</code>, then visit
+        <code>http://localhost:8000/</code>.
+      </p>
+    </section>
+
+    <main id="app-shell" hidden>
+      <!-- 1. Controls -->
+      <section class="panel controls-panel" aria-label="Simulation controls">
+        <div class="controls-grid">
+          <div class="control-group">
+            <label class="control-label" for="region-select">Candidate region</label>
+            <select id="region-select" class="control-select"></select>
+          </div>
+
+          <fieldset class="control-group" style="border: 0; margin: 0; padding: 0;">
+            <legend class="control-label">Observer height</legend>
+            <div id="height-toggle-group" class="seg-group" role="radiogroup" aria-label="Observer height"></div>
+          </fieldset>
+
+          <div class="control-group">
+            <label class="control-label" for="start-date-input">Start date (UTC)</label>
+            <input id="start-date-input" class="control-input" type="date">
+            <span id="date-range-hint" class="control-hint"></span>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="duration-select">Duration</label>
+            <select id="duration-select" class="control-select"></select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 + 3 + 5: Site Picker + Horizon Panorama + Timeline Strips -->
+      <div class="workspace-grid">
+        <!-- 2. Site Picker -->
+        <section class="panel" aria-label="Site picker">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Site Picker</h2>
+              <p id="site-map-status" class="panel-sub">Click a point or use arrow keys</p>
+            </div>
+            <button id="reset-center-btn" type="button" class="btn btn-xs">Centre</button>
+          </div>
+
+          <div id="site-map-progress" class="map-progress" hidden>
+            <div
+              id="site-map-progress-track"
+              class="progress-track map-progress-track"
+              role="progressbar"
+              aria-label="Site map colour-map progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <div id="site-map-progress-bar" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="map-wrap">
+            <canvas
+              id="site-map-canvas"
+              tabindex="0"
+              aria-label="Region hillshade map with candidate grid sites. Click or use arrow keys to select a site; press Home for region centre."
+            ></canvas>
+            <div id="site-map-tooltip" class="map-tooltip" hidden></div>
+          </div>
+
+          <div class="colorbar-row" aria-label="Illumination availability colour scale">
+            <div class="colorbar-gradient"></div>
+            <div class="colorbar-labels">
+              <span>0% sunlit</span>
+              <span>50%</span>
+              <span>100% sunlit</span>
+            </div>
+          </div>
+
+          <div class="site-props" aria-live="polite">
+            <div class="prop-item prop-wide">
+              <span class="prop-label">Selected grid site</span>
+              <span id="site-id-value" class="prop-val">—</span>
+            </div>
+            <div class="prop-item">
+              <span class="prop-label">Lat, Lon</span>
+              <span id="site-latlon-value" class="prop-val">—</span>
+            </div>
+            <div class="prop-item">
+              <span class="prop-label">Ground height</span>
+              <span id="site-height-value" class="prop-val">—</span>
+            </div>
+            <div class="prop-item">
+              <span class="prop-label">Local slope (~100 m)</span>
+              <span id="site-slope-value" class="prop-val">—</span>
+            </div>
+            <div class="prop-item">
+              <span class="prop-label">Horizon min / max</span>
+              <span id="site-horizon-value" class="prop-val">—</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3 + 5: Horizon Panorama + Time Slider + Timeline Strips -->
+        <div class="stack-col">
+          <section class="panel" aria-label="Horizon panorama">
+            <div class="panel-head">
+              <div>
+                <h2 class="panel-title">Horizon Panorama</h2>
+                <p class="panel-sub">Azimuth 0–360° (0° = outward-radial north, clockwise)</p>
+              </div>
+              <div class="pano-toolbar" role="group" aria-label="Panorama zoom view">
+                <button type="button" class="btn btn-xs" data-pano-view="full" aria-pressed="true">Full 360°</button>
+                <button type="button" class="btn btn-xs" data-pano-view="zoom-sun" aria-pressed="false">Zoom Sun (1:1)</button>
+                <button type="button" class="btn btn-xs" data-pano-view="zoom-earth" aria-pressed="false">Zoom Earth (1:1)</button>
+              </div>
+            </div>
+
+            <div class="legend-inline">
+              <span class="legend-item"><span class="swatch swatch-sun"></span> Sun disc &amp; track</span>
+              <span class="legend-item"><span class="swatch swatch-earth"></span> Earth disc &amp; track</span>
+              <span class="legend-item"><span class="swatch swatch-terrain"></span> Terrain horizon silhouette</span>
+            </div>
+
+            <div class="pano-canvas-wrap">
+              <canvas
+                id="panorama-canvas"
+                aria-label="Horizon panorama showing terrain silhouette, Sun and Earth tracks, and discs clipped by the horizon"
+              ></canvas>
+            </div>
+            <p id="pano-caption" class="pano-caption">
+              Azimuth 0 deg = away from the pole (outward), clockwise. Discs drawn at true vertical size; use Zoom for true shape.
+            </p>
+
+            <div class="slider-row">
+              <div class="slider-controls">
+                <button id="step-prev-btn" type="button" class="btn btn-xs" aria-label="Previous time step">‹</button>
+                <button id="play-btn" type="button" class="btn btn-xs" aria-pressed="false">Play</button>
+                <button id="step-next-btn" type="button" class="btn btn-xs" aria-label="Next time step">›</button>
+              </div>
+              <input
+                id="time-slider"
+                class="time-slider"
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                aria-label="Simulation time step"
+              >
+              <span id="time-display" class="time-readout">—</span>
+            </div>
+
+            <div class="now-card" aria-live="polite">
+              <div>
+                <div class="now-stamp-label">Selected instant</div>
+                <div id="now-time" class="now-stamp-val">—</div>
+              </div>
+              <div class="now-body now-body-sun">
+                <span class="now-body-title">Sun disc visible</span>
+                <span id="now-sun-pct" class="now-body-pct">—</span>
+                <span id="now-sun-meta" class="now-body-meta">—</span>
+              </div>
+              <div class="now-body now-body-earth">
+                <span class="now-body-title">Earth disc visible</span>
+                <span id="now-earth-pct" class="now-body-pct">—</span>
+                <span id="now-earth-meta" class="now-body-meta">—</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Timeline Strips -->
+          <section class="panel" aria-label="Visibility timelines">
+            <div class="panel-head">
+              <h2 class="panel-title">Visibility Timeline Strips</h2>
+              <p class="panel-sub">Click or drag anywhere on a strip to jump the time slider</p>
+            </div>
+
+            <div class="strips-grid">
+              <div class="strip-block">
+                <span class="strip-label"><span class="swatch swatch-sun"></span> Sun visible fraction</span>
+                <canvas
+                  id="sun-strip-canvas"
+                  class="strip-canvas"
+                  aria-label="Sun visible fraction timeline over selected period"
+                ></canvas>
+              </div>
+              <div class="strip-block">
+                <span class="strip-label"><span class="swatch swatch-earth"></span> Earth visible fraction (dashed line = 50% threshold)</span>
+                <canvas
+                  id="earth-strip-canvas"
+                  class="strip-canvas"
+                  aria-label="Earth visible fraction timeline over selected period"
+                ></canvas>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- 4. Period Metric Cards -->
+      <section class="panel metrics-section" aria-label="Period summary metrics">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Period Summary Metrics</h2>
+            <p class="panel-sub">Evaluated across the selected start date and duration</p>
+          </div>
+          <button id="add-compare-btn" type="button" class="btn btn-primary">Add to comparison</button>
+        </div>
+
+        <div id="metrics-grid" class="metrics-grid"></div>
+        <p id="earth-note" class="info-note"></p>
+      </section>
+
+      <!-- 6. Comparison -->
+      <section class="panel compare-section" aria-label="Side-by-side site comparison">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Site Comparison (up to 3 configurations)</h2>
+            <p class="panel-sub">Compare different sites, observer heights, or mission windows side by side</p>
+          </div>
+          <div class="compare-actions">
+            <button id="clear-compare-btn" type="button" class="btn btn-xs" disabled>Clear all</button>
+          </div>
+        </div>
+
+        <div id="compare-container"></div>
+        <p id="compare-tradeoff-note" class="info-note"></p>
+      </section>
+
+      <!-- 7. How This Works -->
+      <section id="how-this-works" class="panel" aria-label="Methodology, data sources, and limitations">
+        <div class="panel-head">
+          <h2 class="panel-title">How This Works</h2>
+          <p class="panel-sub">Offline precomputed terrain horizons paired with live topocentric ephemeris in your browser</p>
+        </div>
+
+        <div class="how-sources">
+          <p class="panel-sub" style="font-size: 0.88rem;">
+            <strong>Data sources:</strong>
+            LOLA <code>LDEM_80S_20MPP_ADJ</code> (20 m/px lunar South Polar digital elevation model) from NASA PGDA;
+            NAIF SPICE kernels <code>de440</code> (<code>de440.bsp</code>), <code>moon_pa_de440</code> (<code>moon_pa_de440_200625.bpc</code>),
+            <code>naif0012</code> (<code>naif0012.tls</code>), and the <code>MOON_ME</code> frame kernel (<code>moon_de440_220930.tf</code>).
+          </p>
+        </div>
+
+        <div class="how-grid">
+          <article class="how-card">
+            <h3>Method in 6 short steps</h3>
+            <ol>
+              <li>
+                <strong>Stereographic site grid:</strong> Each candidate zone is sampled on a regular stereographic X/Y grid (clipped to region radius) over the 20 m LOLA DEM, recording ground elevation and 100 m-baseline slope.
+              </li>
+              <li>
+                <strong>360° terrain horizons:</strong> For each grid point and observer height (1 m / 5 m), rays at 1° azimuth steps (0° = outward-radial north, clockwise) march across near-field (20 m) and regional (160 m) LOLA terrain with lunar curvature to record maximum horizon angles.
+              </li>
+              <li>
+                <strong>Moon-centred ephemeris:</strong> NAIF SPICE geometric position vectors (km, <code>MOON_ME</code> frame) for the Sun and Earth are precomputed every 900 s (15 min) across 2027–2029.
+              </li>
+              <li>
+                <strong>Topocentric projection:</strong> In your browser, site latitude, longitude, ground height, and observer height form a local East-North-Up frame; subtracting the site vector from each body vector yields azimuth, elevation, and angular radius <code>asin(R / distance)</code>.
+              </li>
+              <li>
+                <strong>Partial-disc visibility:</strong> At each step, the terrain horizon is linearly interpolated (periodic at 360°) at the body's azimuth, giving normalized height <code>t = (el - horizon) / r_ang</code> and spherical-cap disc visibility fraction.
+              </li>
+              <li>
+                <strong>Mission summary metrics:</strong> Averaging and consecutive-step run lengths over the chosen date window yield solar illumination availability, Sun/Earth visibility percentages, and longest continuous darkness or blackout spans.
+              </li>
+            </ol>
+          </article>
+
+          <article class="how-card">
+            <h3>Known limitations</h3>
+            <ul>
+              <li>
+                <strong>Local near-field terrain sensitivity (~100 m baseline):</strong> Terrain within ~100 m of the observer dominates high positive horizon angles at 1 m or 5 m height; rocks, boulders, and micro-craters smaller than the 20 m DEM are not modeled, and moving 10–20 m on steep crater rims can shift horizon cutoffs by several degrees.
+              </li>
+              <li>
+                <strong>1-degree azimuthal discretization:</strong> Horizons are sampled at 360 integer-degree azimuths and linearly interpolated; narrow terrain spires or notches narrower than 1° may be smoothed or averaged.
+              </li>
+              <li>
+                <strong>0.01-degree horizon quantization:</strong> Horizons are stored in 0.01 deg steps; this changes a single moment's visible fraction by up to ~0.01 at the Sun's edge and metrics by &lt; 0.001.
+              </li>
+              <li>
+                <strong>Geometric ephemeris (no light-time correction):</strong> SPICE vectors use <code>abcorr = "NONE"</code>; at lunar orbital speeds the light-time offset is under 0.001°, well below the ~0.53° solar disc diameter and 0.01° horizon storage precision.
+              </li>
+              <li>
+                <strong>Approximate region boundaries:</strong> Region positions are approximate; boxes were measured on an annotated screenshot of NASA's map. Outputs support mission planning and trade studies rather than formal spacecraft landing hazard certification.
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>
+        Data credits: NASA LOLA (<code>LDEM_80S_20MPP_ADJ</code>, NASA PGDA) &amp; NASA NAIF SPICE
+        (<code>de440</code>, <code>moon_pa_de440</code>, <code>naif0012</code>, <code>MOON_ME</code>).
+      </span>
+      <span>
+        <a href="https://github.com/your-username/lunar-landing-site-navigator" target="_blank" rel="noopener noreferrer">
+          GitHub Repository (placeholder link)
+        </a>
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    if (window.location.protocol === "file:") {
+      document.getElementById("loading-banner").hidden = true;
+      document.getElementById("error-banner").hidden = false;
+      document.getElementById("error-message").textContent =
+        'This app cannot load ES modules or binary data over file://. Please serve this folder over http, not file:// (for example: run "python -m http.server 8000" inside web/).';
+    }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+
+[
+  {
+    "id": "peak-near-cabeus-b",
+    "name": "Peak near Cabeus B",
+    "center_x_m": -169400,
+    "center_y_m": 75400,
+    "center_lat": -83.89,
+    "center_lon": -66.02,
+    "ground_height_m": 781,
+    "radius_km": 11,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "haworth",
+    "name": "Haworth",
+    "center_x_m": -33800,
+    "center_y_m": 94200,
+    "center_lat": -86.70,
+    "center_lon": -19.74,
+    "ground_height_m": 1705,
+    "radius_km": 15,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "malapert-massif",
+    "name": "Malapert Massif",
+    "center_x_m": -1200,
+    "center_y_m": 129900,
+    "center_lat": -85.72,
+    "center_lon": -0.53,
+    "ground_height_m": 1734,
+    "radius_km": 12,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "mons-mouton-plateau",
+    "name": "Mons Mouton Plateau",
+    "center_x_m": 100100,
+    "center_y_m": 145000,
+    "center_lat": -84.19,
+    "center_lon": 34.60,
+    "ground_height_m": 5563,
+    "radius_km": 29,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "mons-mouton",
+    "name": "Mons Mouton",
+    "center_x_m": 79800,
+    "center_y_m": 117200,
+    "center_lat": -85.33,
+    "center_lon": 34.25,
+    "ground_height_m": 5684,
+    "radius_km": 9,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "nobile-rim-1",
+    "name": "Nobile Rim 1",
+    "center_x_m": 89100,
+    "center_y_m": 108700,
+    "center_lat": -85.37,
+    "center_lon": 39.35,
+    "ground_height_m": 4433,
+    "radius_km": 11,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "nobile-rim-2",
+    "name": "Nobile Rim 2",
+    "center_x_m": 158100,
+    "center_y_m": 104500,
+    "center_lat": -83.76,
+    "center_lon": 56.53,
+    "ground_height_m": 965,
+    "radius_km": 12,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "de-gerlache-rim-2",
+    "name": "de Gerlache Rim 2",
+    "center_x_m": -44100,
+    "center_y_m": 18000,
+    "center_lat": -88.43,
+    "center_lon": -67.78,
+    "ground_height_m": 1517,
+    "radius_km": 15,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  },
+  {
+    "id": "slater-plain",
+    "name": "Slater Plain",
+    "center_x_m": 73000,
+    "center_y_m": -61300,
+    "center_lat": -86.86,
+    "center_lon": 130.03,
+    "ground_height_m": -492,
+    "radius_km": 11,
+    "source": "approximate; digitized by hand from NASA's Artemis III region map"
+  }
+]

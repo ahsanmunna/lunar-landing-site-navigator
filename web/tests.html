@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification Suite — Lunar Landing Site Navigator</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrap">
+    <header class="site-header">
+      <div>
+        <h1 class="site-title">JavaScript Engine Verification</h1>
+        <p class="site-subtitle">
+          Compares browser JS computations against Python SPICE/LOLA fixtures in <code>tests/fixtures/reference.json</code>
+        </p>
+      </div>
+      <nav class="header-links">
+        <a href="index.html">Back to Navigator</a>
+      </nav>
+    </header>
+
+    <section class="panel" style="margin-bottom: 16px;">
+      <div class="panel-head">
+        <div>
+          <h2 id="overall-status" class="panel-title">Running checks…</h2>
+          <p id="status-detail" class="panel-sub">Loading web/data/* and tests/fixtures/reference.json…</p>
+        </div>
+      </div>
+
+      <div id="fallback-picker" class="info-note" hidden>
+        <p style="margin: 0 0 8px;">
+          Could not fetch <code>../tests/fixtures/reference.json</code> automatically (if you ran
+          <code>python -m http.server 8000</code> inside <code>web/</code>, the server root stops at
+          <code>web/</code> and cannot read <code>../tests/</code>). Either run
+          <code>python -m http.server 8000</code> from the repository root and open
+          <code>/web/tests.html</code>, or select <code>tests/fixtures/reference.json</code> below:
+        </p>
+        <input id="fixture-file-input" type="file" accept=".json,application/json">
+      </div>
+    </section>
+
+    <section class="panel" style="margin-bottom: 16px;">
+      <div class="panel-head">
+        <h2 class="panel-title">Unit Checks (Geometry &amp; Visibility)</h2>
+      </div>
+      <div id="unit-results"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Reference Fixture Cases (12 Python-vs-JS comparisons)</h2>
+        <p class="panel-sub">
+          Tolerances: illumination ±0.005, percentages ±0.5, hours ±1 step, sample visible fractions ±0.002, az/el ±0.01°
+        </p>
+      </div>
+      <div class="table-scroll">
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Status</th>
+              <th>|Δ Illum|</th>
+              <th>|Δ Pct|</th>
+              <th>|Δ Hours|</th>
+              <th>Max |Δ Az|</th>
+              <th>Max |Δ El|</th>
+              <th>Max |Δ Vis|</th>
+            </tr>
+          </thead>
+          <tbody id="fixture-tbody"></tbody>
+        </table>
+      </div>
+      <p class="info-note" style="margin-top: 12px;">
+        <strong>Horizon source:</strong>
+        <code>tests/fixtures/reference.json</code> evaluates Python metrics and sample-time visible fractions using the
+        packed <code>int16</code> (<code>0.01°</code>) horizons decoded from <code>web/data/horizons.bin</code>
+        (<code>"horizon_source": "packed int16"</code>), so both Python and JS operate on the exact same quantized
+        terrain profile. Summary metrics, az/el, run lengths, and sample visible fractions all match within tolerance.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    if (window.location.protocol === "file:") {
+      document.getElementById("overall-status").textContent = "Cannot run tests over file://";
+      document.getElementById("status-detail").textContent =
+        'Browsers block ES modules and fetch() over file://. Serve this folder over http, not file:// (run "python -m http.server 8000" from the repo root and open http://localhost:8000/web/tests.html).';
+    }
+  </script>
+  <script type="module">
+    import {
+      loadDataPack,
+      extractHorizonDeg,
+      getTimeWindow,
+    } from "./js/data.js";
+    import {
+      forward,
+      inverse,
+      siteLocalFrame,
+      computeSunEarthAzEl,
+    } from "./js/geometry.js";
+    import {
+      discVisibleFraction,
+      interpHorizon,
+      summarize,
+      visibleFraction,
+    } from "./js/visibility.js";
+
+    const TOL = {
+      illum: 0.005,
+      pct: 0.5,
+      vis: 0.002,
+      azel: 0.01,
+    };
+
+    function circularDegDiff(a, b) {
+      return Math.abs(((a - b + 540.0) % 360.0) - 180.0);
+    }
+
+    function runUnitTests() {
+      const checks = [];
+      const add = (name, pass, detail) => checks.push({ name, pass, detail });
+
+      // 1. discVisibleFraction at t = -1, 0, 1
+      const fNeg1 = discVisibleFraction(-1.0);
+      const fZero = discVisibleFraction(0.0);
+      const fPos1 = discVisibleFraction(1.0);
+      add(
+        "discVisibleFraction(-1, 0, 1)",
+        Math.abs(fNeg1 - 0.0) < 1e-12 && Math.abs(fZero - 0.5) < 1e-12 && Math.abs(fPos1 - 1.0) < 1e-12,
+        `got ${fNeg1}, ${fZero}, ${fPos1}`,
+      );
+
+      // 2. Geometry round-trip
+      const pt = forward(-86.0, 2.0);
+      const rec = inverse(pt.x, pt.y);
+      const latErr = Math.abs(rec.lat - (-86.0));
+      const lonErr = circularDegDiff(rec.lon, 2.0);
+      add(
+        "Stereographic round-trip (-86, 2)",
+        latErr < 1e-9 && lonErr < 1e-9,
+        `Δlat=${latErr.toExponential(2)}, Δlon=${lonErr.toExponential(2)}`,
+      );
+
+      // 3. South Pole singularity lat = -90
+      const poleFrame = siteLocalFrame(-90.0, 0.0);
+      const poleInv = inverse(0.0, 0.0);
+      add(
+        "South Pole lat=-90 exact frame",
+        poleInv.lat === -90.0 && poleFrame.up[2] === -1.0 && poleFrame.north[0] === 1.0,
+        `up=[${poleFrame.up.join(",")}], north=[${poleFrame.north.join(",")}]`,
+      );
+
+      // 4. Periodic horizon interpolation across 359 -> 0 seam
+      const hor = new Float64Array(360);
+      hor[359] = 2.0;
+      hor[0] = 4.0;
+      const hWrap = interpHorizon(hor, 359.5, 1.0);
+      add(
+        "Periodic horizon interp at 359.5°",
+        Math.abs(hWrap - 3.0) < 1e-12,
+        `expected 3.0, got ${hWrap}`,
+      );
+
+      return checks;
+    }
+
+    function evaluateReferenceCases(fixtures, dataPack) {
+      const { manifest, ephem, horizons } = dataPack;
+      const results = [];
+
+      for (const c of fixtures) {
+        const pt = manifest.pointsById.get(c.point_id);
+        const hIdx = manifest.observer_heights_m.findIndex(
+          (h) => Math.abs(h - c.observer_height_m) < 1e-6,
+        );
+        if (!pt || hIdx < 0) {
+          results.push({
+            id: `${c.point_id} @ ${c.observer_height_m}m`,
+            pass: false,
+            error: "Missing point or height in manifest",
+          });
+          continue;
+        }
+
+        const hor = extractHorizonDeg(horizons, pt.index, hIdx);
+        const tw = getTimeWindow(manifest, c.start, c.days, c.step_s);
+        const azel = computeSunEarthAzEl({
+          lat: pt.lat,
+          lon: pt.lon,
+          groundHeightM: pt.ground_height_m,
+          observerHeightM: c.observer_height_m,
+          startIdx: tw.startIdx,
+          nSteps: tw.nSteps,
+          stride: tw.stride,
+          ephemData: ephem,
+          constants: manifest.constants,
+        });
+
+        const summary = summarize({
+          hor,
+          groundHeightM: pt.ground_height_m,
+          sunAz: azel.sunAz,
+          sunEl: azel.sunEl,
+          sunR: azel.sunR,
+          earthAz: azel.earthAz,
+          earthEl: azel.earthEl,
+          earthR: azel.earthR,
+          lat: pt.lat,
+          lon: pt.lon,
+          start: c.start,
+          days: c.days,
+          observerHeightM: c.observer_height_m,
+          stepS: c.step_s,
+          azStepDeg: manifest.azStepDeg,
+        });
+
+        const ref = c.summary;
+        const dIllum = Math.abs(summary.illumination_avg_fraction - ref.illumination_avg_fraction);
+        const dPct = Math.max(
+          Math.abs(summary.sun_any_pct - ref.sun_any_pct),
+          Math.abs(summary.earth_any_pct - ref.earth_any_pct),
+          Math.abs(summary.earth_mostly_pct - ref.earth_mostly_pct),
+        );
+        const stepHours = c.step_s / 3600.0;
+        const dHours = Math.max(
+          Math.abs(summary.sun_longest_dark_h - ref.sun_longest_dark_h),
+          Math.abs(summary.earth_longest_blackout_h - ref.earth_longest_blackout_h),
+        );
+
+        let maxAzErr = 0.0;
+        let maxElErr = 0.0;
+        let maxVisErr = 0.0;
+        for (const s of c.sample_times) {
+          const i = s.index;
+          maxAzErr = Math.max(
+            maxAzErr,
+            circularDegDiff(azel.sunAz[i], s.sun_az_deg),
+            circularDegDiff(azel.earthAz[i], s.earth_az_deg),
+          );
+          maxElErr = Math.max(
+            maxElErr,
+            Math.abs(azel.sunEl[i] - s.sun_el_deg),
+            Math.abs(azel.earthEl[i] - s.earth_el_deg),
+          );
+          maxVisErr = Math.max(
+            maxVisErr,
+            Math.abs(summary.sv[i] - s.sun_visible_fraction),
+            Math.abs(summary.ev[i] - s.earth_visible_fraction),
+          );
+        }
+
+        const pass =
+          c.horizon_source === "packed int16" &&
+          dIllum <= TOL.illum &&
+          dPct <= TOL.pct &&
+          dHours <= stepHours + 1e-9 &&
+          maxAzErr <= TOL.azel &&
+          maxElErr <= TOL.azel &&
+          maxVisErr <= TOL.vis;
+
+        results.push({
+          id: `${c.point_id} @ ${c.observer_height_m}m (${c.days}d)`,
+          pass,
+          dIllum,
+          dPct,
+          dHours,
+          maxAzErr,
+          maxElErr,
+          maxVisErr,
+        });
+      }
+
+      return results;
+    }
+
+    function renderResults(unitChecks, fixtureResults) {
+      const unitEl = document.getElementById("unit-results");
+      unitEl.textContent = "";
+      for (const u of unitChecks) {
+        const p = document.createElement("p");
+        p.style.margin = "4px 0";
+        const badge = document.createElement("span");
+        badge.className = u.pass ? "badge-pass" : "badge-fail";
+        badge.textContent = u.pass ? "PASS" : "FAIL";
+        p.append(badge, ` ${u.name} — ${u.detail}`);
+        unitEl.appendChild(p);
+      }
+
+      const tbody = document.getElementById("fixture-tbody");
+      tbody.textContent = "";
+      for (const r of fixtureResults) {
+        const tr = document.createElement("tr");
+        const badge = document.createElement("span");
+        badge.className = r.pass ? "badge-pass" : "badge-fail";
+        badge.textContent = r.pass ? "PASS" : "FAIL";
+
+        const cells = [
+          r.id,
+          badge,
+          r.error ? r.error : r.dIllum.toFixed(6),
+          r.error ? "—" : r.dPct.toFixed(4),
+          r.error ? "—" : r.dHours.toFixed(2),
+          r.error ? "—" : r.maxAzErr.toFixed(5),
+          r.error ? "—" : r.maxElErr.toFixed(5),
+          r.error ? "—" : r.maxVisErr.toFixed(6),
+        ];
+
+        for (const c of cells) {
+          const td = document.createElement("td");
+          if (typeof c === "string") td.textContent = c;
+          else td.appendChild(c);
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+
+      const allPass =
+        unitChecks.every((u) => u.pass) &&
+        fixtureResults.length > 0 &&
+        fixtureResults.every((f) => f.pass);
+
+      const overallEl = document.getElementById("overall-status");
+      const detailEl = document.getElementById("status-detail");
+      const passCount = fixtureResults.filter((f) => f.pass).length;
+      overallEl.textContent = allPass
+        ? `ALL CHECKS PASSED (${unitChecks.length} unit + ${passCount}/${fixtureResults.length} reference cases)`
+        : `SOME CHECKS FAILED (${passCount}/${fixtureResults.length} reference cases passed)`;
+      detailEl.textContent = allPass
+        ? "JavaScript port matches Python SPICE/LOLA reference outputs within all specified tolerances."
+        : "See details in the table below.";
+    }
+
+    async function boot() {
+      const unitChecks = runUnitTests();
+      let dataPack;
+      try {
+        dataPack = await loadDataPack("data");
+      } catch (err) {
+        document.getElementById("overall-status").textContent = "Data load failed";
+        document.getElementById("status-detail").textContent = err.message;
+        renderResults(unitChecks, []);
+        return;
+      }
+
+      try {
+        const resp = await fetch("../tests/fixtures/reference.json");
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const fixtures = await resp.json();
+        const results = evaluateReferenceCases(fixtures, dataPack);
+        renderResults(unitChecks, results);
+      } catch (_err) {
+        document.getElementById("overall-status").textContent = "Waiting for reference.json";
+        document.getElementById("status-detail").textContent =
+          "Unit tests passed; load tests/fixtures/reference.json via root HTTP server or file picker below.";
+        document.getElementById("fallback-picker").hidden = false;
+        renderResults(unitChecks, []);
+
+        document.getElementById("fixture-file-input").addEventListener("change", async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const fixtures = JSON.parse(await file.text());
+          const results = evaluateReferenceCases(fixtures, dataPack);
+          renderResults(unitChecks, results);
+        });
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

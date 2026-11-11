@@ -1,0 +1,26 @@
+{
+  "illumination_avg_fraction": 0.0,
+  "sun_any_pct": 0.0,
+  "sun_longest_dark_h": 720.0,
+  "earth_any_pct": 0.0,
+  "earth_mostly_pct": 0.0,
+  "earth_longest_blackout_h": 720.0,
+  "horizon_min": 6.275476824893128,
+  "horizon_max": 23.80245387476191,
+  "ground_height_m": -2763.896009674805,
+  "inputs": {
+    "lat": -87.3,
+    "lon": 77.0,
+    "ground_height_m": -2763.896009674805,
+    "observer_height_m": 2.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 3600.0
+  },
+  "lat": -87.3,
+  "lon": 77.0,
+  "start": "2027-01-01",
+  "days": 30.0,
+  "observer_height_m": 2.0,
+  "step_s": 3600.0
+}

@@ -1,0 +1,2834 @@
+[
+  {
+    "point_id": "malapert-massif-c",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.5425454221342502,
+      "sun_any_pct": 60.90277777777777,
+      "sun_longest_dark_h": 241.75,
+      "earth_any_pct": 66.11111111111111,
+      "earth_mostly_pct": 61.076388888888886,
+      "earth_longest_blackout_h": 137.75,
+      "horizon_min": -3.19,
+      "horizon_max": 2.78,
+      "ground_height_m": 5141.19,
+      "inputs": {
+        "lat": -86.0,
+        "lon": 2.699998,
+        "ground_height_m": 5141.19,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -86.0,
+      "lon": 2.699998,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 260.3745,
+        "sun_el_deg": 0.3463,
+        "earth_az_deg": 4.4639,
+        "earth_el_deg": -2.2625,
+        "sun_visible_fraction": 0.476736,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 241.2796,
+        "sun_el_deg": -0.9335,
+        "earth_az_deg": 3.3658,
+        "earth_el_deg": -2.9329,
+        "sun_visible_fraction": 0.452366,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 222.0252,
+        "sun_el_deg": -2.0069,
+        "earth_az_deg": 1.7784,
+        "earth_el_deg": -2.8412,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 202.8616,
+        "sun_el_deg": -2.7447,
+        "earth_az_deg": 359.8856,
+        "earth_el_deg": -2.0427,
+        "sun_visible_fraction": 0.002628,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 183.5452,
+        "sun_el_deg": -3.0767,
+        "earth_az_deg": 357.7877,
+        "earth_el_deg": -0.63,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.321535
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 164.3496,
+        "sun_el_deg": -2.9649,
+        "earth_az_deg": 355.6233,
+        "earth_el_deg": 1.231,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 145.0424,
+        "sun_el_deg": -2.4241,
+        "earth_az_deg": 353.495,
+        "earth_el_deg": 3.3795,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 125.8926,
+        "sun_el_deg": -1.5259,
+        "earth_az_deg": 351.6062,
+        "earth_el_deg": 5.5783,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 106.6498,
+        "sun_el_deg": -0.3638,
+        "earth_az_deg": 350.1653,
+        "earth_el_deg": 7.6302,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 87.558,
+        "sun_el_deg": 0.9136,
+        "earth_az_deg": 349.4617,
+        "earth_el_deg": 9.2709,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 68.3478,
+        "sun_el_deg": 2.1756,
+        "earth_az_deg": 349.7442,
+        "earth_el_deg": 10.2707,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 49.2561,
+        "sun_el_deg": 3.2616,
+        "earth_az_deg": 351.1522,
+        "earth_el_deg": 10.3772,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 30.021,
+        "sun_el_deg": 4.0596,
+        "earth_az_deg": 353.614,
+        "earth_el_deg": 9.4331,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 10.8973,
+        "sun_el_deg": 4.4665,
+        "earth_az_deg": 356.7105,
+        "earth_el_deg": 7.4948,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 351.6417,
+        "sun_el_deg": 4.4382,
+        "earth_az_deg": 359.8767,
+        "earth_el_deg": 4.8634,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 332.521,
+        "sun_el_deg": 3.9748,
+        "earth_az_deg": 2.4716,
+        "earth_el_deg": 2.0959,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 313.2917,
+        "sun_el_deg": 3.1182,
+        "earth_az_deg": 4.1278,
+        "earth_el_deg": -0.3302,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.155644
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 294.2073,
+        "sun_el_deg": 1.9693,
+        "earth_az_deg": 4.6913,
+        "earth_el_deg": -2.0518,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 275.005,
+        "sun_el_deg": 0.6356,
+        "earth_az_deg": 4.2523,
+        "earth_el_deg": -2.9595,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 255.7929,
+        "sun_el_deg": -0.7337,
+        "earth_az_deg": 3.0112,
+        "earth_el_deg": -3.0439,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "malapert-massif-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.6915239702957113,
+      "sun_any_pct": 73.36805555555556,
+      "sun_longest_dark_h": 163.75,
+      "earth_any_pct": 71.11111111111111,
+      "earth_mostly_pct": 65.06944444444444,
+      "earth_longest_blackout_h": 123.75,
+      "horizon_min": -3.65,
+      "horizon_max": 1.12,
+      "ground_height_m": 5141.19,
+      "inputs": {
+        "lat": -86.0,
+        "lon": 2.699998,
+        "ground_height_m": 5141.19,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -86.0,
+      "lon": 2.699998,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 260.3745,
+        "sun_el_deg": 0.3463,
+        "earth_az_deg": 4.4639,
+        "earth_el_deg": -2.2625,
+        "sun_visible_fraction": 0.952369,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 241.2796,
+        "sun_el_deg": -0.9335,
+        "earth_az_deg": 3.3658,
+        "earth_el_deg": -2.9329,
+        "sun_visible_fraction": 0.875434,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 222.0252,
+        "sun_el_deg": -2.0069,
+        "earth_az_deg": 1.7784,
+        "earth_el_deg": -2.8412,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 202.8616,
+        "sun_el_deg": -2.7447,
+        "earth_az_deg": 359.8856,
+        "earth_el_deg": -2.0427,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 183.5452,
+        "sun_el_deg": -3.0767,
+        "earth_az_deg": 357.7877,
+        "earth_el_deg": -0.63,
+        "sun_visible_fraction": 0.300355,
+        "earth_visible_fraction": 0.665651
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 164.3496,
+        "sun_el_deg": -2.9649,
+        "earth_az_deg": 355.6233,
+        "earth_el_deg": 1.231,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 145.0424,
+        "sun_el_deg": -2.4241,
+        "earth_az_deg": 353.495,
+        "earth_el_deg": 3.3795,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 125.8926,
+        "sun_el_deg": -1.5259,
+        "earth_az_deg": 351.6062,
+        "earth_el_deg": 5.5783,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 106.6498,
+        "sun_el_deg": -0.3638,
+        "earth_az_deg": 350.1653,
+        "earth_el_deg": 7.6302,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 87.558,
+        "sun_el_deg": 0.9136,
+        "earth_az_deg": 349.4617,
+        "earth_el_deg": 9.2709,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 68.3478,
+        "sun_el_deg": 2.1756,
+        "earth_az_deg": 349.7442,
+        "earth_el_deg": 10.2707,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 49.2561,
+        "sun_el_deg": 3.2616,
+        "earth_az_deg": 351.1522,
+        "earth_el_deg": 10.3772,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 30.021,
+        "sun_el_deg": 4.0596,
+        "earth_az_deg": 353.614,
+        "earth_el_deg": 9.4331,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 10.8973,
+        "sun_el_deg": 4.4665,
+        "earth_az_deg": 356.7105,
+        "earth_el_deg": 7.4948,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 351.6417,
+        "sun_el_deg": 4.4382,
+        "earth_az_deg": 359.8767,
+        "earth_el_deg": 4.8634,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 332.521,
+        "sun_el_deg": 3.9748,
+        "earth_az_deg": 2.4716,
+        "earth_el_deg": 2.0959,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 313.2917,
+        "sun_el_deg": 3.1182,
+        "earth_az_deg": 4.1278,
+        "earth_el_deg": -0.3302,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.792969
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 294.2073,
+        "sun_el_deg": 1.9693,
+        "earth_az_deg": 4.6913,
+        "earth_el_deg": -2.0518,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 275.005,
+        "sun_el_deg": 0.6356,
+        "earth_az_deg": 4.2523,
+        "earth_el_deg": -2.9595,
+        "sun_visible_fraction": 0.196654,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 255.7929,
+        "sun_el_deg": -0.7337,
+        "earth_az_deg": 3.0112,
+        "earth_el_deg": -3.0439,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "peak-near-cabeus-b-p176",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.0,
+      "sun_any_pct": 0.0,
+      "sun_longest_dark_h": 720.0,
+      "earth_any_pct": 30.97222222222222,
+      "earth_mostly_pct": 26.73611111111111,
+      "earth_longest_blackout_h": 279.25,
+      "horizon_min": 4.26,
+      "horizon_max": 13.11,
+      "ground_height_m": 4026.38,
+      "inputs": {
+        "lat": -83.646014,
+        "lon": -67.838984,
+        "ground_height_m": 4026.38,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -83.646014,
+      "lon": -67.838984,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 330.7552,
+        "sun_el_deg": 6.5648,
+        "earth_az_deg": 74.4707,
+        "earth_el_deg": -4.5764,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 311.5627,
+        "sun_el_deg": 5.2177,
+        "earth_az_deg": 73.3066,
+        "earth_el_deg": -5.1311,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 292.3161,
+        "sun_el_deg": 3.3919,
+        "earth_az_deg": 71.733,
+        "earth_el_deg": -4.8764,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 273.2513,
+        "sun_el_deg": 1.3093,
+        "earth_az_deg": 69.9302,
+        "earth_el_deg": -3.8854,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 254.0748,
+        "sun_el_deg": -0.8291,
+        "earth_az_deg": 67.9903,
+        "earth_el_deg": -2.2603,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 234.9934,
+        "sun_el_deg": -2.7643,
+        "earth_az_deg": 66.0354,
+        "earth_el_deg": -0.1805,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 215.7245,
+        "sun_el_deg": -4.3086,
+        "earth_az_deg": 64.1509,
+        "earth_el_deg": 2.183,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 196.5217,
+        "sun_el_deg": -5.2728,
+        "earth_az_deg": 62.5137,
+        "earth_el_deg": 4.5719,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 177.1616,
+        "sun_el_deg": -5.564,
+        "earth_az_deg": 61.3087,
+        "earth_el_deg": 6.7671,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.767585
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 157.9474,
+        "sun_el_deg": -5.1508,
+        "earth_az_deg": 60.7926,
+        "earth_el_deg": 8.4739,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 138.6696,
+        "sun_el_deg": -4.0818,
+        "earth_az_deg": 61.1846,
+        "earth_el_deg": 9.437,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 119.6024,
+        "sun_el_deg": -2.4979,
+        "earth_az_deg": 62.5927,
+        "earth_el_deg": 9.3906,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 100.4806,
+        "sun_el_deg": -0.5624,
+        "earth_az_deg": 64.9281,
+        "earth_el_deg": 8.1876,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 81.5143,
+        "sun_el_deg": 1.483,
+        "earth_az_deg": 67.7862,
+        "earth_el_deg": 5.9313,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.31193
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 62.3983,
+        "sun_el_deg": 3.4364,
+        "earth_az_deg": 70.6466,
+        "earth_el_deg": 2.9826,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 43.3394,
+        "sun_el_deg": 5.0561,
+        "earth_az_deg": 72.9357,
+        "earth_el_deg": -0.038,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 24.0674,
+        "sun_el_deg": 6.1784,
+        "earth_az_deg": 74.3342,
+        "earth_el_deg": -2.6203,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 4.8522,
+        "sun_el_deg": 6.6577,
+        "earth_az_deg": 74.7194,
+        "earth_el_deg": -4.3899,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 345.4827,
+        "sun_el_deg": 6.4381,
+        "earth_az_deg": 74.1883,
+        "earth_el_deg": -5.2481,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 326.1369,
+        "sun_el_deg": 5.5323,
+        "earth_az_deg": 72.9413,
+        "earth_el_deg": -5.2051,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "de-gerlache-rim-2-c",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.835486228759449,
+      "sun_any_pct": 87.46527777777777,
+      "sun_longest_dark_h": 82.0,
+      "earth_any_pct": 52.951388888888886,
+      "earth_mostly_pct": 49.236111111111114,
+      "earth_longest_blackout_h": 193.5,
+      "horizon_min": -1.82,
+      "horizon_max": 2.52,
+      "ground_height_m": 1578.74,
+      "inputs": {
+        "lat": -88.45,
+        "lon": -67.859997,
+        "ground_height_m": 1578.74,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -88.45,
+      "lon": -67.859997,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 330.9592,
+        "sun_el_deg": 2.3691,
+        "earth_az_deg": 74.8938,
+        "earth_el_deg": -5.8467,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 311.8109,
+        "sun_el_deg": 2.0228,
+        "earth_az_deg": 73.7765,
+        "earth_el_deg": -6.4933,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 292.5293,
+        "sun_el_deg": 1.5599,
+        "earth_az_deg": 72.184,
+        "earth_el_deg": -6.3654,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 273.3705,
+        "sun_el_deg": 1.0332,
+        "earth_az_deg": 70.3035,
+        "earth_el_deg": -5.5205,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 254.0822,
+        "sun_el_deg": 0.4908,
+        "earth_az_deg": 68.2381,
+        "earth_el_deg": -4.0525,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 234.9194,
+        "sun_el_deg": -0.0036,
+        "earth_az_deg": 66.1261,
+        "earth_el_deg": -2.13,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 215.6302,
+        "sun_el_deg": -0.4046,
+        "earth_az_deg": 64.0677,
+        "earth_el_deg": 0.0832,
+        "sun_visible_fraction": 0.804551,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 196.472,
+        "sun_el_deg": -0.666,
+        "earth_az_deg": 62.2588,
+        "earth_el_deg": 2.3426,
+        "sun_visible_fraction": 0.38695,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 177.1958,
+        "sun_el_deg": -0.7659,
+        "earth_az_deg": 60.898,
+        "earth_el_deg": 4.4426,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 158.0604,
+        "sun_el_deg": -0.6966,
+        "earth_az_deg": 60.2592,
+        "earth_el_deg": 6.1069,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 138.8166,
+        "sun_el_deg": -0.4704,
+        "earth_az_deg": 60.576,
+        "earth_el_deg": 7.0957,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 119.7188,
+        "sun_el_deg": -0.1208,
+        "earth_az_deg": 61.9748,
+        "earth_el_deg": 7.1528,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 100.5118,
+        "sun_el_deg": 0.3118,
+        "earth_az_deg": 64.3825,
+        "earth_el_deg": 6.1281,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 81.4418,
+        "sun_el_deg": 0.7693,
+        "earth_az_deg": 67.3956,
+        "earth_el_deg": 4.0973,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 62.2468,
+        "sun_el_deg": 1.2026,
+        "earth_az_deg": 70.4729,
+        "earth_el_deg": 1.3816,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 43.1702,
+        "sun_el_deg": 1.5553,
+        "earth_az_deg": 72.9943,
+        "earth_el_deg": -1.447,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.175719
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 23.9523,
+        "sun_el_deg": 1.7891,
+        "earth_az_deg": 74.5977,
+        "earth_el_deg": -3.9082,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 4.843,
+        "sun_el_deg": 1.8707,
+        "earth_az_deg": 75.1265,
+        "earth_el_deg": -5.6407,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 345.5901,
+        "sun_el_deg": 1.7866,
+        "earth_az_deg": 74.6666,
+        "earth_el_deg": -6.5389,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 326.3231,
+        "sun_el_deg": 1.539,
+        "earth_az_deg": 73.4177,
+        "earth_el_deg": -6.5964,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "peak-near-cabeus-b-c",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.5230527178422254,
+      "sun_any_pct": 52.916666666666664,
+      "sun_longest_dark_h": 339.0,
+      "earth_any_pct": 37.361111111111114,
+      "earth_mostly_pct": 33.611111111111114,
+      "earth_longest_blackout_h": 251.75,
+      "horizon_min": -6.28,
+      "horizon_max": 6.62,
+      "ground_height_m": 4536.97,
+      "inputs": {
+        "lat": -83.6,
+        "lon": -68.800001,
+        "ground_height_m": 4536.97,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -83.6,
+      "lon": -68.800001,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 331.7186,
+        "sun_el_deg": 6.6565,
+        "earth_az_deg": 75.4203,
+        "earth_el_deg": -4.6675,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 312.5212,
+        "sun_el_deg": 5.3278,
+        "earth_az_deg": 74.2552,
+        "earth_el_deg": -5.2208,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 293.2711,
+        "sun_el_deg": 3.5081,
+        "earth_az_deg": 72.6818,
+        "earth_el_deg": -4.964,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 274.2055,
+        "sun_el_deg": 1.4188,
+        "earth_az_deg": 70.8801,
+        "earth_el_deg": -3.9705,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 255.0309,
+        "sun_el_deg": -0.7385,
+        "earth_az_deg": 68.9425,
+        "earth_el_deg": -2.3428,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 235.9532,
+        "sun_el_deg": -2.7025,
+        "earth_az_deg": 66.9905,
+        "earth_el_deg": -0.2601,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 216.6881,
+        "sun_el_deg": -4.2826,
+        "earth_az_deg": 65.1096,
+        "earth_el_deg": 2.1062,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 197.4874,
+        "sun_el_deg": -5.2856,
+        "earth_az_deg": 63.4763,
+        "earth_el_deg": 4.4976,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.464168
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 178.1269,
+        "sun_el_deg": -5.6144,
+        "earth_az_deg": 62.2749,
+        "earth_el_deg": 6.6946,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 158.91,
+        "sun_el_deg": -5.2328,
+        "earth_az_deg": 61.7616,
+        "earth_el_deg": 8.4023,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 139.6283,
+        "sun_el_deg": -4.1864,
+        "earth_az_deg": 62.1552,
+        "earth_el_deg": 9.3647,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 120.5581,
+        "sun_el_deg": -2.6133,
+        "earth_az_deg": 63.5629,
+        "earth_el_deg": 9.3162,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 101.4354,
+        "sun_el_deg": -0.6759,
+        "earth_az_deg": 65.896,
+        "earth_el_deg": 8.1096,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 82.4709,
+        "sun_el_deg": 1.3837,
+        "earth_az_deg": 68.7502,
+        "earth_el_deg": 5.8491,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 63.3587,
+        "sun_el_deg": 3.3623,
+        "earth_az_deg": 71.606,
+        "earth_el_deg": 2.8964,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 44.3041,
+        "sun_el_deg": 5.0154,
+        "earth_az_deg": 73.891,
+        "earth_el_deg": -0.1272,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 25.0351,
+        "sun_el_deg": 6.1759,
+        "earth_az_deg": 75.2862,
+        "earth_el_deg": -2.7113,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 5.8202,
+        "sun_el_deg": 6.6936,
+        "earth_az_deg": 75.6692,
+        "earth_el_deg": -4.4814,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 346.4482,
+        "sun_el_deg": 6.5087,
+        "earth_az_deg": 75.137,
+        "earth_el_deg": -5.3389,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 327.0982,
+        "sun_el_deg": 5.6295,
+        "earth_az_deg": 73.8899,
+        "earth_el_deg": -5.2943,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "peak-near-cabeus-b-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.5430378622601907,
+      "sun_any_pct": 55.729166666666664,
+      "sun_longest_dark_h": 294.0,
+      "earth_any_pct": 40.486111111111114,
+      "earth_mostly_pct": 36.84027777777778,
+      "earth_longest_blackout_h": 239.25,
+      "horizon_min": -6.28,
+      "horizon_max": 5.98,
+      "ground_height_m": 4536.97,
+      "inputs": {
+        "lat": -83.6,
+        "lon": -68.800001,
+        "ground_height_m": 4536.97,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -83.6,
+      "lon": -68.800001,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 331.7186,
+        "sun_el_deg": 6.6565,
+        "earth_az_deg": 75.4203,
+        "earth_el_deg": -4.6675,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 312.5212,
+        "sun_el_deg": 5.3278,
+        "earth_az_deg": 74.2552,
+        "earth_el_deg": -5.2208,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 293.2711,
+        "sun_el_deg": 3.5081,
+        "earth_az_deg": 72.6818,
+        "earth_el_deg": -4.964,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 274.2055,
+        "sun_el_deg": 1.4188,
+        "earth_az_deg": 70.8801,
+        "earth_el_deg": -3.9705,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 255.0309,
+        "sun_el_deg": -0.7385,
+        "earth_az_deg": 68.9425,
+        "earth_el_deg": -2.3428,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 235.9532,
+        "sun_el_deg": -2.7025,
+        "earth_az_deg": 66.9905,
+        "earth_el_deg": -0.2601,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 216.6881,
+        "sun_el_deg": -4.2826,
+        "earth_az_deg": 65.1096,
+        "earth_el_deg": 2.1062,
+        "sun_visible_fraction": 0.067703,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 197.4874,
+        "sun_el_deg": -5.2856,
+        "earth_az_deg": 63.4763,
+        "earth_el_deg": 4.4976,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.960918
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 178.1269,
+        "sun_el_deg": -5.6144,
+        "earth_az_deg": 62.2749,
+        "earth_el_deg": 6.6946,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 158.91,
+        "sun_el_deg": -5.2328,
+        "earth_az_deg": 61.7616,
+        "earth_el_deg": 8.4023,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 139.6283,
+        "sun_el_deg": -4.1864,
+        "earth_az_deg": 62.1552,
+        "earth_el_deg": 9.3647,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 120.5581,
+        "sun_el_deg": -2.6133,
+        "earth_az_deg": 63.5629,
+        "earth_el_deg": 9.3162,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 101.4354,
+        "sun_el_deg": -0.6759,
+        "earth_az_deg": 65.896,
+        "earth_el_deg": 8.1096,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 82.4709,
+        "sun_el_deg": 1.3837,
+        "earth_az_deg": 68.7502,
+        "earth_el_deg": 5.8491,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 63.3587,
+        "sun_el_deg": 3.3623,
+        "earth_az_deg": 71.606,
+        "earth_el_deg": 2.8964,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.00305
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 44.3041,
+        "sun_el_deg": 5.0154,
+        "earth_az_deg": 73.891,
+        "earth_el_deg": -0.1272,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 25.0351,
+        "sun_el_deg": 6.1759,
+        "earth_az_deg": 75.2862,
+        "earth_el_deg": -2.7113,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 5.8202,
+        "sun_el_deg": 6.6936,
+        "earth_az_deg": 75.6692,
+        "earth_el_deg": -4.4814,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 346.4482,
+        "sun_el_deg": 6.5087,
+        "earth_az_deg": 75.137,
+        "earth_el_deg": -5.3389,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 327.0982,
+        "sun_el_deg": 5.6295,
+        "earth_az_deg": 73.8899,
+        "earth_el_deg": -5.2943,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "mons-mouton-c",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.16542404948853465,
+      "sun_any_pct": 19.82638888888889,
+      "sun_longest_dark_h": 359.75,
+      "earth_any_pct": 41.84027777777778,
+      "earth_mostly_pct": 37.638888888888886,
+      "earth_longest_blackout_h": 241.5,
+      "horizon_min": 0.67,
+      "horizon_max": 6.12,
+      "ground_height_m": 4991.43,
+      "inputs": {
+        "lat": -84.38,
+        "lon": 28.499999,
+        "ground_height_m": 4991.43,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -84.38,
+      "lon": 28.499999,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 234.6705,
+        "sun_el_deg": -2.2398,
+        "earth_az_deg": 338.806,
+        "earth_el_deg": -1.0122,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 215.5553,
+        "sun_el_deg": -3.5864,
+        "earth_az_deg": 337.7375,
+        "earth_el_deg": -1.7273,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 196.2484,
+        "sun_el_deg": -4.4309,
+        "earth_az_deg": 336.1489,
+        "earth_el_deg": -1.7019,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 177.0277,
+        "sun_el_deg": -4.6708,
+        "earth_az_deg": 334.225,
+        "earth_el_deg": -0.9841,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 157.6778,
+        "sun_el_deg": -4.2849,
+        "earth_az_deg": 332.0687,
+        "earth_el_deg": 0.3372,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 138.4899,
+        "sun_el_deg": -3.3254,
+        "earth_az_deg": 329.8246,
+        "earth_el_deg": 2.1022,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 119.2294,
+        "sun_el_deg": -1.8926,
+        "earth_az_deg": 327.6014,
+        "earth_el_deg": 4.1546,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 100.1441,
+        "sun_el_deg": -0.1687,
+        "earth_az_deg": 325.6133,
+        "earth_el_deg": 6.2668,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.799156
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 80.9548,
+        "sun_el_deg": 1.6722,
+        "earth_az_deg": 324.0777,
+        "earth_el_deg": 8.2516,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 61.8794,
+        "sun_el_deg": 3.3994,
+        "earth_az_deg": 323.2972,
+        "earth_el_deg": 9.8587,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 42.6384,
+        "sun_el_deg": 4.8381,
+        "earth_az_deg": 323.5328,
+        "earth_el_deg": 10.8704,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 23.4787,
+        "sun_el_deg": 5.8054,
+        "earth_az_deg": 324.9371,
+        "earth_el_deg": 11.0405,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 4.1639,
+        "sun_el_deg": 6.1997,
+        "earth_az_deg": 327.4456,
+        "earth_el_deg": 10.2077,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 344.9816,
+        "sun_el_deg": 5.9677,
+        "earth_az_deg": 330.6339,
+        "earth_el_deg": 8.408,
+        "sun_visible_fraction": 0.354185,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 325.7117,
+        "sun_el_deg": 5.1293,
+        "earth_az_deg": 333.9191,
+        "earth_el_deg": 5.9158,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.410155
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 306.6261,
+        "sun_el_deg": 3.7857,
+        "earth_az_deg": 336.6334,
+        "earth_el_deg": 3.2604,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 287.4662,
+        "sun_el_deg": 2.0659,
+        "earth_az_deg": 338.3903,
+        "earth_el_deg": 0.9049,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 268.4558,
+        "sun_el_deg": 0.1759,
+        "earth_az_deg": 339.0242,
+        "earth_el_deg": -0.7923,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 249.3022,
+        "sun_el_deg": -1.7054,
+        "earth_az_deg": 338.6234,
+        "earth_el_deg": -1.7174,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 230.0936,
+        "sun_el_deg": -3.3625,
+        "earth_az_deg": 337.3881,
+        "earth_el_deg": -1.853,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "mons-mouton-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.2264711814017962,
+      "sun_any_pct": 27.256944444444443,
+      "sun_longest_dark_h": 342.5,
+      "earth_any_pct": 44.166666666666664,
+      "earth_mostly_pct": 40.0,
+      "earth_longest_blackout_h": 232.75,
+      "horizon_min": 0.58,
+      "horizon_max": 5.52,
+      "ground_height_m": 4991.43,
+      "inputs": {
+        "lat": -84.38,
+        "lon": 28.499999,
+        "ground_height_m": 4991.43,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -84.38,
+      "lon": 28.499999,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 234.6705,
+        "sun_el_deg": -2.2398,
+        "earth_az_deg": 338.806,
+        "earth_el_deg": -1.0122,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 215.5553,
+        "sun_el_deg": -3.5864,
+        "earth_az_deg": 337.7375,
+        "earth_el_deg": -1.7273,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 196.2484,
+        "sun_el_deg": -4.4309,
+        "earth_az_deg": 336.1489,
+        "earth_el_deg": -1.7019,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 177.0277,
+        "sun_el_deg": -4.6708,
+        "earth_az_deg": 334.225,
+        "earth_el_deg": -0.9841,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 157.6778,
+        "sun_el_deg": -4.2849,
+        "earth_az_deg": 332.0687,
+        "earth_el_deg": 0.3372,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 138.4899,
+        "sun_el_deg": -3.3254,
+        "earth_az_deg": 329.8246,
+        "earth_el_deg": 2.1022,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 119.2294,
+        "sun_el_deg": -1.8926,
+        "earth_az_deg": 327.6014,
+        "earth_el_deg": 4.1546,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 100.1441,
+        "sun_el_deg": -0.1687,
+        "earth_az_deg": 325.6133,
+        "earth_el_deg": 6.2668,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 80.9548,
+        "sun_el_deg": 1.6722,
+        "earth_az_deg": 324.0777,
+        "earth_el_deg": 8.2516,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 61.8794,
+        "sun_el_deg": 3.3994,
+        "earth_az_deg": 323.2972,
+        "earth_el_deg": 9.8587,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 42.6384,
+        "sun_el_deg": 4.8381,
+        "earth_az_deg": 323.5328,
+        "earth_el_deg": 10.8704,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 23.4787,
+        "sun_el_deg": 5.8054,
+        "earth_az_deg": 324.9371,
+        "earth_el_deg": 11.0405,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 4.1639,
+        "sun_el_deg": 6.1997,
+        "earth_az_deg": 327.4456,
+        "earth_el_deg": 10.2077,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 344.9816,
+        "sun_el_deg": 5.9677,
+        "earth_az_deg": 330.6339,
+        "earth_el_deg": 8.408,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 325.7117,
+        "sun_el_deg": 5.1293,
+        "earth_az_deg": 333.9191,
+        "earth_el_deg": 5.9158,
+        "sun_visible_fraction": 0.084395,
+        "earth_visible_fraction": 0.769979
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 306.6261,
+        "sun_el_deg": 3.7857,
+        "earth_az_deg": 336.6334,
+        "earth_el_deg": 3.2604,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 287.4662,
+        "sun_el_deg": 2.0659,
+        "earth_az_deg": 338.3903,
+        "earth_el_deg": 0.9049,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 268.4558,
+        "sun_el_deg": 0.1759,
+        "earth_az_deg": 339.0242,
+        "earth_el_deg": -0.7923,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 249.3022,
+        "sun_el_deg": -1.7054,
+        "earth_az_deg": 338.6234,
+        "earth_el_deg": -1.7174,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 230.0936,
+        "sun_el_deg": -3.3625,
+        "earth_az_deg": 337.3881,
+        "earth_el_deg": -1.853,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "nobile-rim-1-c",
+    "observer_height_m": 1.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.0,
+      "sun_any_pct": 0.0,
+      "sun_longest_dark_h": 720.0,
+      "earth_any_pct": 0.0,
+      "earth_mostly_pct": 0.0,
+      "earth_longest_blackout_h": 720.0,
+      "horizon_min": -1.03,
+      "horizon_max": 13.26,
+      "ground_height_m": 599.56,
+      "inputs": {
+        "lat": -85.2,
+        "lon": 48.0,
+        "ground_height_m": 599.56,
+        "observer_height_m": 1.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -85.2,
+      "lon": 48.0,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 1.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 215.1672,
+        "sun_el_deg": -2.912,
+        "earth_az_deg": 319.4144,
+        "earth_el_deg": -2.6096,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 196.0117,
+        "sun_el_deg": -3.6252,
+        "earth_az_deg": 318.3586,
+        "earth_el_deg": -3.3448,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 176.6939,
+        "sun_el_deg": -3.8265,
+        "earth_az_deg": 316.7681,
+        "earth_el_deg": -3.3483,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 157.4963,
+        "sun_el_deg": -3.4939,
+        "earth_az_deg": 314.8302,
+        "earth_el_deg": -2.6641,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 138.1917,
+        "sun_el_deg": -2.6644,
+        "earth_az_deg": 312.6516,
+        "earth_el_deg": -1.3784,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 119.0488,
+        "sun_el_deg": -1.4453,
+        "earth_az_deg": 310.3817,
+        "earth_el_deg": 0.3522,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 99.8107,
+        "sun_el_deg": 0.0384,
+        "earth_az_deg": 308.1331,
+        "earth_el_deg": 2.3731,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 80.7127,
+        "sun_el_deg": 1.5996,
+        "earth_az_deg": 306.1228,
+        "earth_el_deg": 4.4595,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 61.478,
+        "sun_el_deg": 3.0805,
+        "earth_az_deg": 304.5692,
+        "earth_el_deg": 6.4258,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 42.3422,
+        "sun_el_deg": 4.2939,
+        "earth_az_deg": 303.7741,
+        "earth_el_deg": 8.0238,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 23.0498,
+        "sun_el_deg": 5.1149,
+        "earth_az_deg": 303.9969,
+        "earth_el_deg": 9.0378,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 3.8698,
+        "sun_el_deg": 5.4367,
+        "earth_az_deg": 305.3908,
+        "earth_el_deg": 9.224,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 344.575,
+        "sun_el_deg": 5.2225,
+        "earth_az_deg": 307.896,
+        "earth_el_deg": 8.4228,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 325.4447,
+        "sun_el_deg": 4.4951,
+        "earth_az_deg": 311.0948,
+        "earth_el_deg": 6.6684,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 306.2381,
+        "sun_el_deg": 3.3235,
+        "earth_az_deg": 314.4082,
+        "earth_el_deg": 4.2288,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 287.2008,
+        "sun_el_deg": 1.8485,
+        "earth_az_deg": 317.1629,
+        "earth_el_deg": 1.6212,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 268.0559,
+        "sun_el_deg": 0.2106,
+        "earth_az_deg": 318.9619,
+        "earth_el_deg": -0.701,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 249.0222,
+        "sun_el_deg": -1.3947,
+        "earth_az_deg": 319.6284,
+        "earth_el_deg": -2.3856,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 229.818,
+        "sun_el_deg": -2.8154,
+        "earth_az_deg": 319.2452,
+        "earth_el_deg": -3.3181,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 210.5539,
+        "sun_el_deg": -3.8868,
+        "earth_az_deg": 318.0112,
+        "earth_el_deg": -3.4769,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "nobile-rim-1-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.0,
+      "sun_any_pct": 0.0,
+      "sun_longest_dark_h": 720.0,
+      "earth_any_pct": 0.0,
+      "earth_mostly_pct": 0.0,
+      "earth_longest_blackout_h": 720.0,
+      "horizon_min": -1.04,
+      "horizon_max": 13.2,
+      "ground_height_m": 599.56,
+      "inputs": {
+        "lat": -85.2,
+        "lon": 48.0,
+        "ground_height_m": 599.56,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -85.2,
+      "lon": 48.0,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 215.1672,
+        "sun_el_deg": -2.912,
+        "earth_az_deg": 319.4144,
+        "earth_el_deg": -2.6096,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 196.0117,
+        "sun_el_deg": -3.6252,
+        "earth_az_deg": 318.3586,
+        "earth_el_deg": -3.3448,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 176.6939,
+        "sun_el_deg": -3.8265,
+        "earth_az_deg": 316.7681,
+        "earth_el_deg": -3.3483,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 157.4963,
+        "sun_el_deg": -3.4939,
+        "earth_az_deg": 314.8302,
+        "earth_el_deg": -2.6641,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 138.1917,
+        "sun_el_deg": -2.6644,
+        "earth_az_deg": 312.6516,
+        "earth_el_deg": -1.3784,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 119.0488,
+        "sun_el_deg": -1.4453,
+        "earth_az_deg": 310.3817,
+        "earth_el_deg": 0.3522,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 99.8107,
+        "sun_el_deg": 0.0384,
+        "earth_az_deg": 308.1331,
+        "earth_el_deg": 2.3731,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 80.7127,
+        "sun_el_deg": 1.5996,
+        "earth_az_deg": 306.1228,
+        "earth_el_deg": 4.4595,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 61.478,
+        "sun_el_deg": 3.0805,
+        "earth_az_deg": 304.5692,
+        "earth_el_deg": 6.4258,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 42.3422,
+        "sun_el_deg": 4.2939,
+        "earth_az_deg": 303.7741,
+        "earth_el_deg": 8.0238,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 23.0498,
+        "sun_el_deg": 5.1149,
+        "earth_az_deg": 303.9969,
+        "earth_el_deg": 9.0378,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 3.8698,
+        "sun_el_deg": 5.4367,
+        "earth_az_deg": 305.3908,
+        "earth_el_deg": 9.224,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 344.575,
+        "sun_el_deg": 5.2225,
+        "earth_az_deg": 307.896,
+        "earth_el_deg": 8.4228,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 325.4447,
+        "sun_el_deg": 4.4951,
+        "earth_az_deg": 311.0948,
+        "earth_el_deg": 6.6684,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 306.2381,
+        "sun_el_deg": 3.3235,
+        "earth_az_deg": 314.4082,
+        "earth_el_deg": 4.2288,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 287.2008,
+        "sun_el_deg": 1.8485,
+        "earth_az_deg": 317.1629,
+        "earth_el_deg": 1.6212,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 268.0559,
+        "sun_el_deg": 0.2106,
+        "earth_az_deg": 318.9619,
+        "earth_el_deg": -0.701,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 249.0222,
+        "sun_el_deg": -1.3947,
+        "earth_az_deg": 319.6284,
+        "earth_el_deg": -2.3856,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 229.818,
+        "sun_el_deg": -2.8154,
+        "earth_az_deg": 319.2452,
+        "earth_el_deg": -3.3181,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 210.5539,
+        "sun_el_deg": -3.8868,
+        "earth_az_deg": 318.0112,
+        "earth_el_deg": -3.4769,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "slater-plain-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.0,
+      "sun_any_pct": 0.0,
+      "sun_longest_dark_h": 720.0,
+      "earth_any_pct": 21.84027777777778,
+      "earth_mostly_pct": 15.590277777777779,
+      "earth_longest_blackout_h": 320.25,
+      "horizon_min": 3.57,
+      "horizon_max": 8.76,
+      "ground_height_m": -1742.83,
+      "inputs": {
+        "lat": -88.08,
+        "lon": 111.289999,
+        "ground_height_m": -1742.83,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -88.08,
+      "lon": 111.289999,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 151.8341,
+        "sun_el_deg": -0.6789,
+        "earth_az_deg": 256.0991,
+        "earth_el_deg": -6.7124,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 132.6996,
+        "sun_el_deg": -0.3129,
+        "earth_az_deg": 255.0203,
+        "earth_el_deg": -7.4232,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 113.4288,
+        "sun_el_deg": 0.2024,
+        "earth_az_deg": 253.4199,
+        "earth_el_deg": -7.388,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 94.2763,
+        "sun_el_deg": 0.799,
+        "earth_az_deg": 251.4896,
+        "earth_el_deg": -6.6529,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 74.9882,
+        "sun_el_deg": 1.4137,
+        "earth_az_deg": 249.3396,
+        "earth_el_deg": -5.3048,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 55.8187,
+        "sun_el_deg": 1.9664,
+        "earth_az_deg": 247.1197,
+        "earth_el_deg": -3.5039,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 36.5162,
+        "sun_el_deg": 2.3987,
+        "earth_az_deg": 244.9408,
+        "earth_el_deg": -1.4078,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 17.3399,
+        "sun_el_deg": 2.6533,
+        "earth_az_deg": 243.0126,
+        "earth_el_deg": 0.75,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 358.0438,
+        "sun_el_deg": 2.7011,
+        "earth_az_deg": 241.543,
+        "earth_el_deg": 2.7741,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 338.8904,
+        "sun_el_deg": 2.5324,
+        "earth_az_deg": 240.8179,
+        "earth_el_deg": 4.402,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.416
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 319.6335,
+        "sun_el_deg": 2.1595,
+        "earth_az_deg": 241.0802,
+        "earth_el_deg": 5.406,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.985968
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 300.5299,
+        "sun_el_deg": 1.6234,
+        "earth_az_deg": 242.4689,
+        "earth_el_deg": 5.5374,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 281.324,
+        "sun_el_deg": 0.9719,
+        "earth_az_deg": 244.9219,
+        "earth_el_deg": 4.6445,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.554583
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 262.2606,
+        "sun_el_deg": 0.28,
+        "earth_az_deg": 248.0372,
+        "earth_el_deg": 2.7839,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 243.0753,
+        "sun_el_deg": -0.3889,
+        "earth_az_deg": 251.2607,
+        "earth_el_deg": 0.247,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 224.008,
+        "sun_el_deg": -0.9564,
+        "earth_az_deg": 253.9415,
+        "earth_el_deg": -2.4314,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 204.7974,
+        "sun_el_deg": -1.3705,
+        "earth_az_deg": 255.6877,
+        "earth_el_deg": -4.7947,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 185.6925,
+        "sun_el_deg": -1.5843,
+        "earth_az_deg": 256.3192,
+        "earth_el_deg": -6.4931,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 166.442,
+        "sun_el_deg": -1.5812,
+        "earth_az_deg": 255.913,
+        "earth_el_deg": -7.4167,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 147.1764,
+        "sun_el_deg": -1.3646,
+        "earth_az_deg": 254.6676,
+        "earth_el_deg": -7.547,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  },
+  {
+    "point_id": "de-gerlache-rim-2-c",
+    "observer_height_m": 5.0,
+    "start": "2027-01-01",
+    "days": 30.0,
+    "step_s": 900.0,
+    "horizon_source": "packed int16",
+    "summary": {
+      "illumination_avg_fraction": 0.89122981983846,
+      "sun_any_pct": 91.66666666666666,
+      "sun_longest_dark_h": 52.0,
+      "earth_any_pct": 52.986111111111114,
+      "earth_mostly_pct": 49.375,
+      "earth_longest_blackout_h": 193.25,
+      "horizon_min": -3.57,
+      "horizon_max": 2.46,
+      "ground_height_m": 1578.74,
+      "inputs": {
+        "lat": -88.45,
+        "lon": -67.859997,
+        "ground_height_m": 1578.74,
+        "observer_height_m": 5.0,
+        "start": "2027-01-01",
+        "days": 30.0,
+        "step_s": 900.0
+      },
+      "lat": -88.45,
+      "lon": -67.859997,
+      "start": "2027-01-01",
+      "days": 30.0,
+      "observer_height_m": 5.0,
+      "step_s": 900.0
+    },
+    "sample_times": [
+      {
+        "index": 0,
+        "time_utc": "2027-01-01T00:00:00",
+        "sun_az_deg": 330.9592,
+        "sun_el_deg": 2.3691,
+        "earth_az_deg": 74.8938,
+        "earth_el_deg": -5.8467,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 151,
+        "time_utc": "2027-01-02T13:45:00",
+        "sun_az_deg": 311.8109,
+        "sun_el_deg": 2.0228,
+        "earth_az_deg": 73.7765,
+        "earth_el_deg": -6.4933,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 303,
+        "time_utc": "2027-01-04T03:45:00",
+        "sun_az_deg": 292.5293,
+        "sun_el_deg": 1.5599,
+        "earth_az_deg": 72.184,
+        "earth_el_deg": -6.3654,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 454,
+        "time_utc": "2027-01-05T17:30:00",
+        "sun_az_deg": 273.3705,
+        "sun_el_deg": 1.0332,
+        "earth_az_deg": 70.3035,
+        "earth_el_deg": -5.5205,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 606,
+        "time_utc": "2027-01-07T07:30:00",
+        "sun_az_deg": 254.0822,
+        "sun_el_deg": 0.4908,
+        "earth_az_deg": 68.2381,
+        "earth_el_deg": -4.0525,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 757,
+        "time_utc": "2027-01-08T21:15:00",
+        "sun_az_deg": 234.9194,
+        "sun_el_deg": -0.0036,
+        "earth_az_deg": 66.1261,
+        "earth_el_deg": -2.13,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 909,
+        "time_utc": "2027-01-10T11:15:00",
+        "sun_az_deg": 215.6302,
+        "sun_el_deg": -0.4046,
+        "earth_az_deg": 64.0677,
+        "earth_el_deg": 0.0832,
+        "sun_visible_fraction": 0.824592,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1060,
+        "time_utc": "2027-01-12T01:00:00",
+        "sun_az_deg": 196.472,
+        "sun_el_deg": -0.666,
+        "earth_az_deg": 62.2588,
+        "earth_el_deg": 2.3426,
+        "sun_visible_fraction": 0.410099,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1212,
+        "time_utc": "2027-01-13T15:00:00",
+        "sun_az_deg": 177.1958,
+        "sun_el_deg": -0.7659,
+        "earth_az_deg": 60.898,
+        "earth_el_deg": 4.4426,
+        "sun_visible_fraction": 0.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1363,
+        "time_utc": "2027-01-15T04:45:00",
+        "sun_az_deg": 158.0604,
+        "sun_el_deg": -0.6966,
+        "earth_az_deg": 60.2592,
+        "earth_el_deg": 6.1069,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1515,
+        "time_utc": "2027-01-16T18:45:00",
+        "sun_az_deg": 138.8166,
+        "sun_el_deg": -0.4704,
+        "earth_az_deg": 60.576,
+        "earth_el_deg": 7.0957,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1666,
+        "time_utc": "2027-01-18T08:30:00",
+        "sun_az_deg": 119.7188,
+        "sun_el_deg": -0.1208,
+        "earth_az_deg": 61.9748,
+        "earth_el_deg": 7.1528,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1818,
+        "time_utc": "2027-01-19T22:30:00",
+        "sun_az_deg": 100.5118,
+        "sun_el_deg": 0.3118,
+        "earth_az_deg": 64.3825,
+        "earth_el_deg": 6.1281,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 1969,
+        "time_utc": "2027-01-21T12:15:00",
+        "sun_az_deg": 81.4418,
+        "sun_el_deg": 0.7693,
+        "earth_az_deg": 67.3956,
+        "earth_el_deg": 4.0973,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2121,
+        "time_utc": "2027-01-23T02:15:00",
+        "sun_az_deg": 62.2468,
+        "sun_el_deg": 1.2026,
+        "earth_az_deg": 70.4729,
+        "earth_el_deg": 1.3816,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 1.0
+      },
+      {
+        "index": 2272,
+        "time_utc": "2027-01-24T16:00:00",
+        "sun_az_deg": 43.1702,
+        "sun_el_deg": 1.5553,
+        "earth_az_deg": 72.9943,
+        "earth_el_deg": -1.447,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.175718
+      },
+      {
+        "index": 2424,
+        "time_utc": "2027-01-26T06:00:00",
+        "sun_az_deg": 23.9523,
+        "sun_el_deg": 1.7891,
+        "earth_az_deg": 74.5977,
+        "earth_el_deg": -3.9082,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2575,
+        "time_utc": "2027-01-27T19:45:00",
+        "sun_az_deg": 4.843,
+        "sun_el_deg": 1.8707,
+        "earth_az_deg": 75.1265,
+        "earth_el_deg": -5.6407,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2727,
+        "time_utc": "2027-01-29T09:45:00",
+        "sun_az_deg": 345.5901,
+        "sun_el_deg": 1.7866,
+        "earth_az_deg": 74.6666,
+        "earth_el_deg": -6.5389,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      },
+      {
+        "index": 2879,
+        "time_utc": "2027-01-30T23:45:00",
+        "sun_az_deg": 326.3231,
+        "sun_el_deg": 1.539,
+        "earth_az_deg": 73.4177,
+        "earth_el_deg": -6.5964,
+        "sun_visible_fraction": 1.0,
+        "earth_visible_fraction": 0.0
+      }
+    ]
+  }
+]

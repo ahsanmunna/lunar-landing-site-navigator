@@ -14,6 +14,7 @@ from lunar_engine.geometry import (
     site_local_frame,
     site_position_km,
 )
+import scripts._geo as standalone_geo
 
 
 @pytest.mark.parametrize(
@@ -37,6 +38,57 @@ def test_geometry_round_trip(lat, lon):
     # Longitude difference modulo 360
     lon_diff = (lon_rec - lon + 180.0) % 360.0 - 180.0
     assert lon_diff == pytest.approx(0.0, abs=1e-6)
+
+
+@pytest.mark.parametrize(
+    "lat,lon",
+    [
+        (-89.999999, 0.0),
+        (-89.999999, 45.0),
+        (-89.999999, 90.0),
+        (-89.999999, 180.0),
+        (-89.999999, -90.0),
+        (-89.999999, -179.999),
+        (-89.9999999, 30.0),
+        (-89.9999999, -120.0),
+    ],
+)
+def test_pole_adjacent_round_trip(lat, lon):
+    """Pole-adjacent cases (sub-millimetre to centimetre offsets from South Pole).
+
+    Verifies forward and inverse round-trip within 1e-6 degrees for both lunar_engine
+    and standalone scripts._geo transforms.
+    """
+    for mod in [forward, standalone_geo.forward]:
+        inv = inverse if mod is forward else standalone_geo.inverse
+        x, y = mod(lat, lon)
+        lat_rec, lon_rec = inv(x, y)
+
+        assert lat_rec == pytest.approx(lat, abs=1e-6)
+        lon_diff = (lon_rec - lon + 180.0) % 360.0 - 180.0
+        assert lon_diff == pytest.approx(0.0, abs=1e-6)
+
+
+@pytest.mark.parametrize(
+    "x,y",
+    [
+        (0.001, 0.002),
+        (-0.005, 0.001),
+        (0.0, 1e-5),
+        (-1e-5, 0.0),
+        (0.01, -0.01),
+        (1.0, -1.0),
+    ],
+)
+def test_pole_adjacent_xy_round_trip(x, y):
+    """Pole-adjacent small (x, y) millimetre/centimetre offsets round-trip cleanly."""
+    for mod in [forward, standalone_geo.forward]:
+        inv = inverse if mod is forward else standalone_geo.inverse
+        lat, lon = inv(x, y)
+        x_rec, y_rec = mod(lat, lon)
+
+        assert x_rec == pytest.approx(x, abs=1e-6)
+        assert y_rec == pytest.approx(y, abs=1e-6)
 
 
 def test_south_pole_lat_neg_90_does_not_crash():

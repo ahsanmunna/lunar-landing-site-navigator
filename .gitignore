@@ -4,7 +4,12 @@
 *.tiff
 *.tif
 *.npy
+*.npz
+*.checkpoint*
 outputs/
+
+# Web data pack must be tracked in git
+!web/data/**
 
 # Python cache & build artifacts
 __pycache__/
@@ -23,3 +28,5 @@ build/
 .venv
 env/
 venv/
+
+changes.diff
