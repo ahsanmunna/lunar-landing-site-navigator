@@ -110,6 +110,8 @@
     } from "./js/visibility.js";
     import {
       computePointMapMetric,
+      formatMaxSelectedNote,
+      getColorMapTimeWindow,
       pickMaxMetricPoint,
     } from "./js/metrics.js";
 
@@ -124,7 +126,7 @@
       return Math.abs(((a - b + 540.0) % 360.0) - 180.0);
     }
 
-    function runUnitTests() {
+    function runUnitTests(manifest) {
       const checks = [];
       const add = (name, pass, detail) => checks.push({ name, pass, detail });
 
@@ -189,6 +191,30 @@
         "Default region & max-metric picker tie-break",
         defWithMal === "malapert-massif" && defFallback === "haworth" && pickedTie?.id === "near",
         `default=${defWithMal}/${defFallback}, maxTie=${pickedTie?.id}`,
+      );
+
+      // 6. formatMaxSelectedNote for 30-day and 365-day windows
+      const note30 = formatMaxSelectedNote({
+        nSites: 441,
+        metric: "sun_illumination",
+        mapTimeWindow: getColorMapTimeWindow(manifest, "2027-01-01", 30),
+        observerHeightM: 1,
+        days: 30,
+      });
+      const note365 = formatMaxSelectedNote({
+        nSites: 441,
+        metric: "sun_illumination",
+        mapTimeWindow: getColorMapTimeWindow(manifest, "2027-01-01", 365),
+        observerHeightM: 1,
+        days: 365,
+      });
+      add(
+        "formatMaxSelectedNote (30d & 365d)",
+        note30 ===
+          "Selected: highest 'Sun illumination' among 441 grid sites in this region (map window: first 30 days at 1 h steps, 1 m observer height). This is not a recommendation." &&
+          note365 ===
+            "Selected: highest 'Sun illumination' among 441 grid sites in this region (map window: first 90 days at 1 h steps, 1 m observer height). This is not a recommendation. The cards below use your full period.",
+        "30d and 365d note strings match active metric, real window, and period suffix",
       );
 
       return checks;
@@ -386,16 +412,21 @@
     }
 
     async function boot() {
-      const unitChecks = runUnitTests();
       let dataPack;
       try {
         dataPack = await loadDataPack("data");
       } catch (err) {
+        const fallbackManifest = {
+          ephemeris: { step_s: 900, n_times: 70080 },
+          ephemStartMs: Date.UTC(2027, 0, 1),
+        };
         document.getElementById("overall-status").textContent = "Data load failed";
         document.getElementById("status-detail").textContent = err.message;
-        renderResults(unitChecks, []);
+        renderResults(runUnitTests(fallbackManifest), []);
         return;
       }
+
+      const unitChecks = runUnitTests(dataPack.manifest);
 
       try {
         const resp = await fetch("../tests/fixtures/reference.json");

@@ -70,7 +70,7 @@ web/data/horizons.bin   ──┘        │
 ## 3. Per-File Guide & Main Functions
 
 ### `web/index.html`
-- **What it does**: Semantic single-page structure containing loading/error banners, control bar, site picker panel (with map metric selector, colourbar legend, and max-site picker buttons), horizon panorama panel + time slider + "Now" card, timeline strips, 6 summary metric cards, comparison section, `"How this works"` panel, and NASA credits footer.
+- **What it does**: Semantic single-page structure containing loading/error banners, control bar, site picker panel (with map metric selector, colourbar legend + window/step caption, and max-site picker buttons), horizon panorama panel + time slider + "Now" card, timeline strips, 6 summary metric cards, comparison section, `"How this works"` panel, and NASA credits footer.
 - **Note**: Uses relative paths (`css/style.css`, `js/main.js`) so it works both via `python -m http.server 8000` inside `web/` and on GitHub Pages. Includes `<link rel="icon" href="data:,">` to prevent `/favicon.ico` 404 console errors.
 
 ### `web/tests.html`
@@ -118,7 +118,7 @@ web/data/horizons.bin   ──┘        │
   - `evaluateSite(...)`: Runs `geometry.js` + `visibility.js` for the active site.
   - `computePointMapMetric(...)` (and `computePointIlluminationFraction` wrapper): Allocation-free single-point calculation using `stepDiscVisibleFraction`, `isDiscVisibleAny`, and `isDiscVisibleMostly`.
   - `computeRegionMapMetricLazy(...)` (and `computeRegionIlluminationLazy` wrapper): Computes the selected map metric asynchronously in `requestAnimationFrame`-paced chunks (`chunkBudgetMs = 5.0`), caching by `(region, height, start, steps, stride, metric)`.
-  - `pickMaxMetricPoint(points, valueMap, region)` & `formatMaxSelectedNote(nSites)`: Finds the maximum computed site (breaking ties by closest distance to region centre) and formats the non-recommendation note.
+  - `pickMaxMetricPoint(points, valueMap, region)` & `formatMaxSelectedNote({ nSites, metric, mapTimeWindow, observerHeightM, days })`: Finds the maximum computed site (breaking ties by closest distance to region centre) and formats the non-recommendation note from the active metric, the real window returned by `getColorMapTimeWindow`, observer height, and whether the full selected period exceeds the map window.
 
 ### `web/js/panorama.js`
 - **What it does**: Canvas 2D horizon panorama renderer.

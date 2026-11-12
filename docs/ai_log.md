@@ -458,3 +458,31 @@ WHEN DONE: list exactly which files you changed or created, test outputs, and an
 1. **Layout & Default Region (`web/css/style.css`, `web/js/data.js`, `web/js/main.js`, `web/index.html`)**: Set `align-items: start` on `.workspace-grid` so the Site Picker panel sizes to its own content instead of stretching vertically alongside the timeline strips, verified responsive widths `1440`, `1024`, `768`, and `360 px`, added `getDefaultRegionId()` defaulting to Malapert Massif (and its centre `malapert-massif-c`) when present in `manifest.json`, and updated the `"How this works"` geometric ephemeris limitation text to the exact `'LT+S'` comparison note.
 2. **Site Picker Map Metrics & Max-Site Buttons (`web/js/visibility.js`, `web/js/metrics.js`, `web/js/charts.js`, `web/js/main.js`, `web/index.html`)**: Extracted shared `stepDiscVisibleFraction`, `isDiscVisibleAny` (`fraction > 0`), and `isDiscVisibleMostly` (`fraction > 0.5`) helpers used identically by `summarize()` and the Site Picker map metric computation; added the segmented map metric selector (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`) with per-`region+height+window+metric` caching and dynamic colourbar legend/tooltip labels; and added `"Select brightest site"` and `"Select site with most Earth view"` buttons (`pickMaxMetricPoint()` breaking ties by proximity to region centre) with the required non-recommendation note and no combined score or `"best overall"` label.
 3. **Pipeline Check Order, Tests & Documentation (`scripts/build_datapack.py`, `tests/test_web.mjs`, `web/tests.html`, `docs/frontend_explained.md`, `README.md`)**: Reordered `main()` in `scripts/build_datapack.py` to load and validate `data_src/regions.json` before checking `LUNAR_DEM_PATH`; added map Earth-metric fixture checks, default-region checks, cache-key separation, and max-site picker checks in `tests/test_web.mjs` and `web/tests.html`; updated `docs/frontend_explained.md` and `README.md` (with DEM and no-DEM `pytest` instructions).
+
+
+## Phase 2.1 Request
+
+```text
+PHASE 2.1 (small fix; stay strictly inside this scope).
+ALLOWED FILES: web/js/main.js, web/js/metrics.js, web/index.html, web/css/style.css (only if needed),
+tests/test_web.mjs, web/tests.html, docs/frontend_explained.md, docs/ai_log.md.
+Do NOT edit anything else. Do NOT run any git command.
+1. formatMaxSelectedNote must say which metric and which window were used, e.g.:
+   "Selected: highest 'Sun illumination' among 441 grid sites in this region (map window: first 30 days at
+   1 h steps, 1 m observer height). This is not a recommendation."
+   When the chosen duration is longer than the map window (90 days), append: "The cards below use your full
+   period." Use the real window from getColorMapTimeWindow, not hard-coded numbers.
+2. Add a one-line caption under the map legend: "Map colours use at most the first 90 days at 1 h steps; the
+   cards below use your full period at 15 min steps."
+3. Update tests in tests/test_web.mjs (and web/tests.html if it checks the old note text) for the new note text
+   with both a 30-day and a 365-day case.
+4. Run pytest (with and without LUNAR_DEM_PATH) and node tests/test_web.mjs and report the outputs.
+5. Update docs/frontend_explained.md and append this prompt verbatim to docs/ai_log.md.
+WHEN DONE: list exactly which files you changed, and the test outputs.
+```
+
+### Phase 2.1 Summary
+1. **Rich Max-Selection Note (`web/js/metrics.js`, `web/js/main.js`)**: Updated `formatMaxSelectedNote` to accept the active metric, the real `mapTimeWindow` returned by `getColorMapTimeWindow`, `observerHeightM`, and selected `days`, reporting e.g. `"Selected: highest '<metric>' among N grid sites in this region (map window: first D days at S h steps, H m observer height). This is not a recommendation."` and appending `" The cards below use your full period."` when `days` exceeds the map window length.
+2. **Map Legend Caption (`web/index.html`, `web/css/style.css`)**: Added `#map-legend-caption` below `#colorbar-row` explaining `"Map colours use at most the first 90 days at 1 h steps; the cards below use your full period at 15 min steps."`.
+3. **Tests & Documentation (`tests/test_web.mjs`, `web/tests.html`, `docs/frontend_explained.md`, `docs/ai_log.md`)**: Updated `tests/test_web.mjs` and `web/tests.html` to test `formatMaxSelectedNote` for both 30-day and 365-day windows plus verify the map legend caption in `web/index.html`, and updated `docs/frontend_explained.md`.
+

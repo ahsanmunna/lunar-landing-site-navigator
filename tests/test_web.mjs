@@ -75,6 +75,7 @@ async function main() {
   const ephem = decodeEphemBuffer(ephemBuf, manifest);
   const horizons = decodeHorizonsBuffer(horizonsBuf, manifest);
   const fixtures = JSON.parse(await fs.readFile(FIXTURES_PATH, "utf8"));
+  const indexHtml = await fs.readFile(path.join(ROOT, "web", "index.html"), "utf8");
 
   let failures = 0;
   function check(name, fn) {
@@ -153,6 +154,12 @@ async function main() {
       COMPARISON_TRADEOFF_NOTE,
       "Which site is better depends on mission needs: power, communications and terrain safety trade off.",
     );
+    assert.ok(
+      indexHtml.includes(
+        "Map colours use at most the first 90 days at 1 h steps; the cards below use your full period at 15 min steps.",
+      ),
+      "Missing map legend caption in web/index.html",
+    );
 
     const store = createComparisonStore();
     for (let i = 0; i < 3; i++) {
@@ -208,9 +215,29 @@ async function main() {
       ["lower", 0.5],
     ]);
     assert.equal(pickMaxMetricPoint(synthPts, synthVals, synthReg).id, "near-tie");
+
+    const mapTw30 = getColorMapTimeWindow(manifest, "2027-01-01", 30);
     assert.equal(
-      formatMaxSelectedNote(441),
-      "Selected: highest value among 441 grid sites in this region for this period and height. This is not a recommendation.",
+      formatMaxSelectedNote({
+        nSites: 441,
+        metric: "sun_illumination",
+        mapTimeWindow: mapTw30,
+        observerHeightM: 1,
+        days: 30,
+      }),
+      "Selected: highest 'Sun illumination' among 441 grid sites in this region (map window: first 30 days at 1 h steps, 1 m observer height). This is not a recommendation.",
+    );
+
+    const mapTw365 = getColorMapTimeWindow(manifest, "2027-01-01", 365);
+    assert.equal(
+      formatMaxSelectedNote({
+        nSites: 2629,
+        metric: "earth_any",
+        mapTimeWindow: mapTw365,
+        observerHeightM: 5,
+        days: 365,
+      }),
+      "Selected: highest 'Earth visible (any part)' among 2629 grid sites in this region (map window: first 90 days at 1 h steps, 5 m observer height). This is not a recommendation. The cards below use your full period.",
     );
   });
 

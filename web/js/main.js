@@ -166,6 +166,7 @@ async function init() {
     playTimer: null,
     evaluation: null,
     timeWindow: null,
+    mapTimeWindow: null,
     regionImage: null,
     illuminationMap: null,
   };
@@ -462,8 +463,15 @@ async function init() {
     els.mapPickNote.textContent = "";
   }
 
-  function showMaxPickNote(nSites) {
-    els.mapPickNote.textContent = formatMaxSelectedNote(nSites);
+  function showMaxPickNote(nSites, metricId, mapTimeWindow) {
+    const observerHeightM = manifest.observer_heights_m[state.heightIdx];
+    els.mapPickNote.textContent = formatMaxSelectedNote({
+      nSites,
+      metric: metricId,
+      mapTimeWindow,
+      observerHeightM,
+      days: state.days,
+    });
     els.mapPickNote.hidden = false;
   }
 
@@ -483,7 +491,8 @@ async function init() {
     const metricDef = getMapMetricDefinition(metricId);
     state.timeWindow = getTimeWindow(manifest, state.startDate, state.days);
     const mapTimeWindow = getColorMapTimeWindow(manifest, state.startDate, state.days);
-    const mapDays = Math.min(state.days, 90);
+    state.mapTimeWindow = mapTimeWindow;
+    const mapDays = Math.round((mapTimeWindow.nSteps * mapTimeWindow.stepS) / 86400);
     state.illuminationMap = null;
     state.mapValuesReady = false;
     setMapPickButtonsEnabled(false);
@@ -558,7 +567,9 @@ async function init() {
     if (!bestPt) return;
     state.point = bestPt;
     evaluateCurrentSite();
-    showMaxPickNote(regionPoints.length);
+    const mapTimeWindow =
+      state.mapTimeWindow || getColorMapTimeWindow(manifest, state.startDate, state.days);
+    showMaxPickNote(regionPoints.length, state.mapMetric, mapTimeWindow);
   }
 
   function selectSiteWithMaxMetric(targetMetric) {
@@ -575,6 +586,7 @@ async function init() {
   function recomputeSiteAndGrid() {
     cancelPendingColorMap();
     state.illuminationMap = null;
+    state.mapTimeWindow = null;
     state.mapValuesReady = false;
     setMapPickButtonsEnabled(false);
     clearMaxPickNote();

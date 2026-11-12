@@ -468,9 +468,52 @@ export function pickMaxMetricPoint(points, valueMap, region) {
   return bestPt;
 }
 
+function formatStepInterval(stepS) {
+  const s = Number(stepS);
+  if (s >= 3600 && s % 3600 === 0) {
+    return `${s / 3600} h`;
+  }
+  if (s >= 60 && s % 60 === 0) {
+    return `${s / 60} min`;
+  }
+  return `${s} s`;
+}
+
+function formatWindowDays(mapTimeWindow) {
+  const daysRaw = (mapTimeWindow.nSteps * mapTimeWindow.stepS) / 86400.0;
+  const days =
+    Math.abs(daysRaw - Math.round(daysRaw)) < 1e-6
+      ? Math.round(daysRaw)
+      : Number(daysRaw.toFixed(1));
+  return { days, label: `${days} ${days === 1 ? "day" : "days"}` };
+}
+
 /**
- * Format the non-recommendation note shown when a max-metric site button is used.
+ * Format the non-recommendation note shown when a max-metric site button is used,
+ * naming the active map metric, real map time window, and observer height, plus
+ * noting when the full period extends beyond the map window.
  */
-export function formatMaxSelectedNote(nSites) {
-  return `Selected: highest value among ${nSites} grid sites in this region for this period and height. This is not a recommendation.`;
+export function formatMaxSelectedNote({
+  nSites,
+  metric = DEFAULT_MAP_METRIC_ID,
+  mapTimeWindow,
+  observerHeightM,
+  days,
+}) {
+  if (!mapTimeWindow || !Number.isFinite(mapTimeWindow.nSteps) || !Number.isFinite(mapTimeWindow.stepS)) {
+    throw new Error("formatMaxSelectedNote requires a valid mapTimeWindow");
+  }
+  const metricDef = getMapMetricDefinition(metric);
+  const { days: mapDays, label: mapDaysLabel } = formatWindowDays(mapTimeWindow);
+  const stepLabel = formatStepInterval(mapTimeWindow.stepS);
+  const siteNoun = nSites === 1 ? "grid site" : "grid sites";
+  const base =
+    `Selected: highest '${metricDef.label}' among ${nSites} ${siteNoun} in this region ` +
+    `(map window: first ${mapDaysLabel} at ${stepLabel} steps, ${observerHeightM} m observer height). ` +
+    "This is not a recommendation.";
+  const chosenDays = days !== undefined ? Number(days) : mapDays;
+  if (chosenDays > mapDays + 1e-9) {
+    return `${base} The cards below use your full period.`;
+  }
+  return base;
 }

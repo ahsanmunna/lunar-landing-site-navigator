@@ -472,6 +472,13 @@ a {
   margin-top: 4px;
 }
 
+.map-legend-caption {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
 .site-props {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
