@@ -5,6 +5,7 @@
 import {
   loadDataPack,
   loadRegionImage,
+  getDefaultRegionId,
   getRegionCenterPoint,
   getTimeRangeBounds,
   getTimeWindow,
@@ -14,9 +15,14 @@ import {
   DURATION_OPTIONS,
   METRIC_DEFINITIONS,
   EARTH_VISIBILITY_NOTE,
+  DEFAULT_MAP_METRIC_ID,
+  MAP_METRICS,
+  getMapMetricDefinition,
   evaluateSite,
   getColorMapTimeWindow,
-  computeRegionIlluminationLazy,
+  computeRegionMapMetricLazy,
+  pickMaxMetricPoint,
+  formatMaxSelectedNote,
 } from "./metrics.js";
 import { createPanoramaRenderer } from "./panorama.js";
 import { createSitePicker, createTimelineStrip } from "./charts.js";
@@ -53,6 +59,14 @@ async function init() {
     siteMapProgressTrack: byId("site-map-progress-track"),
     siteMapProgressBar: byId("site-map-progress-bar"),
     resetCenterBtn: byId("reset-center-btn"),
+    mapMetricGroup: byId("map-metric-group"),
+    colorbarRow: byId("colorbar-row"),
+    colorbarMin: byId("colorbar-min"),
+    colorbarMid: byId("colorbar-mid"),
+    colorbarMax: byId("colorbar-max"),
+    selectBrightestBtn: byId("select-brightest-btn"),
+    selectEarthBtn: byId("select-earth-btn"),
+    mapPickNote: byId("map-pick-note"),
 
     siteIdValue: byId("site-id-value"),
     siteLatLonValue: byId("site-latlon-value"),
@@ -137,14 +151,17 @@ async function init() {
   els.loadingBanner.hidden = true;
   els.appShell.hidden = false;
 
+  const defaultRegionId = getDefaultRegionId(manifest);
   const state = {
-    regionId: manifest.regions[0].id,
-    point: getRegionCenterPoint(manifest, manifest.regions[0].id),
+    regionId: defaultRegionId,
+    point: getRegionCenterPoint(manifest, defaultRegionId),
     heightIdx: 0,
     startDate: manifest.ephemeris.start_utc.slice(0, 10),
     days: 30,
     tIdx: 0,
     panoViewMode: "full",
+    mapMetric: DEFAULT_MAP_METRIC_ID,
+    mapValuesReady: false,
     playing: false,
     playTimer: null,
     evaluation: null,
@@ -153,7 +170,7 @@ async function init() {
     illuminationMap: null,
   };
 
-  const illuminationCache = new Map();
+  const mapValueCache = new Map();
   let cancelLazyCompute = null;
   const compareStore = createComparisonStore();
 
@@ -183,10 +200,37 @@ async function init() {
     input.addEventListener("change", () => {
       if (input.checked) {
         state.heightIdx = idx;
+        clearMaxPickNote();
         recomputeSiteAndGrid();
       }
     });
   });
+
+  // Populate site picker map metric segmented control
+  const mapMetricInputs = new Map();
+  for (const metricDef of MAP_METRICS) {
+    const label = document.createElement("label");
+    label.className = "seg-option";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "map-metric";
+    input.value = metricDef.id;
+    input.checked = metricDef.id === state.mapMetric;
+    const span = document.createElement("span");
+    span.textContent = metricDef.label;
+    label.append(input, span);
+    els.mapMetricGroup.appendChild(label);
+    mapMetricInputs.set(metricDef.id, input);
+
+    input.addEventListener("change", () => {
+      if (input.checked && state.mapMetric !== metricDef.id) {
+        state.mapMetric = metricDef.id;
+        clearMaxPickNote();
+        updateMapLegend();
+        startLazyRegionMap();
+      }
+    });
+  }
 
   // Populate duration dropdown (filtered to available ephemeris span)
   const { maxDaysAvailable } = getTimeRangeBounds(manifest, 1);
@@ -211,6 +255,7 @@ async function init() {
     tooltipEl: els.siteMapTooltip,
     onSelectPoint: (pt) => {
       state.point = pt;
+      clearMaxPickNote();
       evaluateCurrentSite();
     },
   });
@@ -381,14 +426,45 @@ async function init() {
 
     const region = manifest.regionsById.get(state.regionId);
     const regionPoints = manifest.pointsByRegion.get(state.regionId) || [];
+    const metricDef = getMapMetricDefinition(state.mapMetric);
     sitePicker.update({
       region,
       image: state.regionImage,
       points: regionPoints,
       selectedPoint: state.point,
       illuminationMap: state.illuminationMap,
+      metricShortLabel: metricDef.shortLabel,
       gridSpacingM: manifest.grid_spacing_m,
     });
+  }
+
+  function syncMapMetricRadios() {
+    for (const [id, input] of mapMetricInputs) {
+      input.checked = id === state.mapMetric;
+    }
+  }
+
+  function updateMapLegend() {
+    const def = getMapMetricDefinition(state.mapMetric);
+    els.colorbarRow.setAttribute("aria-label", def.ariaLabel);
+    els.colorbarMin.textContent = def.legendMin;
+    els.colorbarMid.textContent = def.legendMid;
+    els.colorbarMax.textContent = def.legendMax;
+  }
+
+  function setMapPickButtonsEnabled(enabled) {
+    els.selectBrightestBtn.disabled = !enabled;
+    els.selectEarthBtn.disabled = !enabled;
+  }
+
+  function clearMaxPickNote() {
+    els.mapPickNote.hidden = true;
+    els.mapPickNote.textContent = "";
+  }
+
+  function showMaxPickNote(nSites) {
+    els.mapPickNote.textContent = formatMaxSelectedNote(nSites);
+    els.mapPickNote.hidden = false;
   }
 
   function cancelPendingColorMap() {
@@ -398,22 +474,27 @@ async function init() {
     }
   }
 
-  function startLazyRegionIllumination() {
+  function startLazyRegionMap({ onComplete = null } = {}) {
     cancelPendingColorMap();
     const region = manifest.regionsById.get(state.regionId);
     const regionPoints = manifest.pointsByRegion.get(state.regionId) || [];
     const observerHeightM = manifest.observer_heights_m[state.heightIdx];
+    const metricId = state.mapMetric;
+    const metricDef = getMapMetricDefinition(metricId);
     state.timeWindow = getTimeWindow(manifest, state.startDate, state.days);
     const mapTimeWindow = getColorMapTimeWindow(manifest, state.startDate, state.days);
     const mapDays = Math.min(state.days, 90);
     state.illuminationMap = null;
+    state.mapValuesReady = false;
+    setMapPickButtonsEnabled(false);
 
     els.siteMapProgress.hidden = false;
     els.siteMapProgressBar.style.width = "0%";
     els.siteMapProgressTrack.setAttribute("aria-valuenow", "0");
-    els.siteMapStatus.textContent = `Computing colour map: 0/${regionPoints.length} sites (0%)…`;
+    els.siteMapStatus.textContent = `Computing ${metricDef.label} map: 0/${regionPoints.length} sites (0%)…`;
 
-    cancelLazyCompute = computeRegionIlluminationLazy({
+    let finishedSync = false;
+    const cancelHandle = computeRegionMapMetricLazy({
       regionId: state.regionId,
       regionPoints,
       heightIdx: state.heightIdx,
@@ -422,25 +503,30 @@ async function init() {
       manifest,
       ephem,
       horizons,
-      cache: illuminationCache,
+      cache: mapValueCache,
+      metric: metricId,
       onBatch: (partialMap, doneCount, totalCount) => {
         state.illuminationMap = partialMap;
         const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 100;
         els.siteMapProgressBar.style.width = `${pct}%`;
         els.siteMapProgressTrack.setAttribute("aria-valuenow", String(pct));
-        els.siteMapStatus.textContent = `Computing colour map: ${doneCount}/${totalCount} sites (${pct}%)…`;
+        els.siteMapStatus.textContent = `Computing ${metricDef.label} map: ${doneCount}/${totalCount} sites (${pct}%)…`;
         sitePicker.update({
           region,
           image: state.regionImage,
           points: regionPoints,
           selectedPoint: state.point,
           illuminationMap: partialMap,
+          metricShortLabel: metricDef.shortLabel,
           gridSpacingM: manifest.grid_spacing_m,
         });
       },
       onDone: (fullMap) => {
+        finishedSync = true;
         cancelLazyCompute = null;
         state.illuminationMap = fullMap;
+        state.mapValuesReady = true;
+        setMapPickButtonsEnabled(regionPoints.length > 0);
         els.siteMapProgressBar.style.width = "100%";
         els.siteMapProgressTrack.setAttribute("aria-valuenow", "100");
         els.siteMapProgress.hidden = true;
@@ -452,18 +538,49 @@ async function init() {
           points: regionPoints,
           selectedPoint: state.point,
           illuminationMap: fullMap,
+          metricShortLabel: metricDef.shortLabel,
           gridSpacingM: manifest.grid_spacing_m,
         });
+        if (onComplete) {
+          onComplete(fullMap);
+        }
       },
     });
+    if (!finishedSync) {
+      cancelLazyCompute = cancelHandle;
+    }
+  }
+
+  function applyMaxFromCurrentMap() {
+    const region = manifest.regionsById.get(state.regionId);
+    const regionPoints = manifest.pointsByRegion.get(state.regionId) || [];
+    const bestPt = pickMaxMetricPoint(regionPoints, state.illuminationMap, region);
+    if (!bestPt) return;
+    state.point = bestPt;
+    evaluateCurrentSite();
+    showMaxPickNote(regionPoints.length);
+  }
+
+  function selectSiteWithMaxMetric(targetMetric) {
+    if (state.mapMetric === targetMetric && state.mapValuesReady && state.illuminationMap) {
+      applyMaxFromCurrentMap();
+      return;
+    }
+    state.mapMetric = targetMetric;
+    syncMapMetricRadios();
+    updateMapLegend();
+    startLazyRegionMap({ onComplete: () => applyMaxFromCurrentMap() });
   }
 
   function recomputeSiteAndGrid() {
     cancelPendingColorMap();
     state.illuminationMap = null;
+    state.mapValuesReady = false;
+    setMapPickButtonsEnabled(false);
+    clearMaxPickNote();
     syncDateBounds();
     evaluateCurrentSite();
-    startLazyRegionIllumination();
+    startLazyRegionMap();
   }
 
   async function selectRegion(regionId) {
@@ -471,6 +588,7 @@ async function init() {
     state.regionId = regionId;
     state.point = getRegionCenterPoint(manifest, regionId);
     state.regionImage = null;
+    clearMaxPickNote();
 
     const region = manifest.regionsById.get(regionId);
     recomputeSiteAndGrid();
@@ -494,18 +612,30 @@ async function init() {
   els.startDateInput.addEventListener("change", () => {
     if (els.startDateInput.value) {
       state.startDate = els.startDateInput.value;
+      clearMaxPickNote();
       recomputeSiteAndGrid();
     }
   });
 
   els.durationSelect.addEventListener("change", () => {
     state.days = Number(els.durationSelect.value);
+    clearMaxPickNote();
     recomputeSiteAndGrid();
   });
 
   els.resetCenterBtn.addEventListener("click", () => {
     state.point = getRegionCenterPoint(manifest, state.regionId);
+    clearMaxPickNote();
     evaluateCurrentSite();
+  });
+
+  els.selectBrightestBtn.addEventListener("click", () => {
+    selectSiteWithMaxMetric("sun_illumination");
+  });
+
+  els.selectEarthBtn.addEventListener("click", () => {
+    const targetMetric = state.mapMetric === "earth_mostly" ? "earth_mostly" : "earth_any";
+    selectSiteWithMaxMetric(targetMetric);
   });
 
   const FULL_PANO_CAPTION =
@@ -615,6 +745,7 @@ async function init() {
   }
 
   // Initial load
+  updateMapLegend();
   renderComparison();
   await selectRegion(state.regionId);
 }

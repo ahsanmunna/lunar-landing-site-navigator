@@ -408,3 +408,53 @@ WHEN DONE: list exactly which files you changed or created, test output, and any
 1. **Packed Fixture Generation & Synthetic Pack Test (`scripts/build_datapack.py`, `tests/test_datapack.py`)**: Updated `generate_reference_fixtures` to accept `horizons_bin` (defaulting to `web/data/horizons.bin` when `horizons_data` is omitted) and updated `main()` to pass `horizons_bin=output_horizons` so Step 6 reads and decodes the packed `int16 / 100.0` horizons written to disk rather than calling `compute_horizon`. Added `test_generate_reference_fixtures_decodes_tiny_synthetic_pack` in `tests/test_datapack.py` to test a tiny synthetic `[2, 2, 360]` `horizons.bin` file end-to-end.
 2. **UI Colour-Map Responsiveness & Canvas Batching (`web/js/metrics.js`, `web/js/charts.js`, `web/js/geometry.js`, `web/js/visibility.js`, `web/js/panorama.js`, `docs/frontend_explained.md`)**: Retained the `>= 3600 s` step and `<= 90 days` cap, `requestAnimationFrame` chunking, progress bar, and cancellation-on-change while lowering the default chunk time budget to `5.0 ms`, replacing `Math.hypot` with inline scalar `Math.sqrt` projections, single-passing `summarize()`, and bucketing site/track marker fills into shared canvas paths for smooth frames on large grids (`mons-mouton-plateau`, 2,629 sites at 1000 m spacing over 365 days).
 3. **Verification of Static Deliverables & Tests**: Verified the existing Full 360 panorama caption and `0.01 deg` quantization note in `web/index.html` and `web/js/main.js`, the root `index.html` redirect and relative asset paths when serving repo root (`/web/` and `/web/tests.html`), and the required `README.md` sections.
+
+
+## Phase 2 Request
+
+```text
+PHASE 2 (stay strictly inside this scope).
+
+ALLOWED FILES: web/index.html, web/css/style.css, web/js/*.js, tests/test_web.mjs, web/tests.html,
+scripts/build_datapack.py (ONLY the order of checks inside main()), tests/test_datapack.py (only if
+needed for item 6), docs/frontend_explained.md, docs/ai_log.md, README.md.
+Do NOT edit: lunar_engine/*, data_src/*, anything under web/data/, tests/fixtures/*.
+Do NOT run any git command. Do NOT run build_datapack.py against the real output paths.
+
+TASKS:
+1. Layout: the left (site picker) column must not stretch; remove the blank card next to the visibility
+   timeline strips. Check widths 1440, 1024, 768, 360 px.
+2. Map metric selector in the Site Picker (segmented control): "Sun illumination" (default),
+   "Earth visible (any part)", "Earth more than half visible". Reuse the existing chunked, cancellable
+   computation, with the same time window rules; cache per region+height+window+metric; legend text changes
+   with the metric ("0% ... 100% of the time"). The metric functions used by the map must be the SAME
+   functions summarize() relies on (same discVisibleFraction thresholds: any = fraction > 0, more than half =
+   fraction > 0.5).
+3. Two buttons: "Select brightest site" and "Select site with most Earth view", enabled once the map
+   computation for the current metric/window has finished. They choose the maximum of the computed values
+   among the region's grid points (ties: closest to region centre). Show a note: "Selected: highest value
+   among N grid sites in this region for this period and height. This is not a recommendation." NO combined
+   score and no "best overall" label anywhere.
+4. In "How this works", replace the light-time limitation with exactly: "Geometric ephemeris (no light-time or
+   aberration correction): NAIF SPICE 'LT+S' directions differ from the geometric vectors used here by about
+   0.006 deg for the Sun and 0.0002 deg for Earth, far below the 0.53 deg solar disc diameter and the 0.01 deg
+   horizon precision."
+5. Default region on load: Malapert Massif (site = its centre), if present in the manifest; otherwise first region.
+6. scripts/build_datapack.py main(): load and validate data_src/regions.json BEFORE checking for the DEM, so
+   the two refusal tests pass without LUNAR_DEM_PATH. Do not change anything else in that file.
+7. Tests (tests/test_web.mjs): add checks that the map's Earth-any and Earth-more-than-half values for two
+   reference fixture cases match the fixture summary earth_any_pct and earth_mostly_pct within 0.5
+   percentage points (same time window as the fixture), and that the brightest-site picker returns the
+   maximum.
+8. Update docs/frontend_explained.md and README.md (Tests: how to run with and without the DEM).
+   Append this prompt verbatim to docs/ai_log.md with a short summary.
+9. Run pytest WITHOUT LUNAR_DEM_PATH set and again with it set, and node tests/test_web.mjs. Report both
+   pytest outputs. Report the UI blocked-time measurement for the largest region at 365 days for each metric.
+
+WHEN DONE: list exactly which files you changed or created, test outputs, and anything unsure.
+```
+
+### Phase 2 Summary
+1. **Layout & Default Region (`web/css/style.css`, `web/js/data.js`, `web/js/main.js`, `web/index.html`)**: Set `align-items: start` on `.workspace-grid` so the Site Picker panel sizes to its own content instead of stretching vertically alongside the timeline strips, verified responsive widths `1440`, `1024`, `768`, and `360 px`, added `getDefaultRegionId()` defaulting to Malapert Massif (and its centre `malapert-massif-c`) when present in `manifest.json`, and updated the `"How this works"` geometric ephemeris limitation text to the exact `'LT+S'` comparison note.
+2. **Site Picker Map Metrics & Max-Site Buttons (`web/js/visibility.js`, `web/js/metrics.js`, `web/js/charts.js`, `web/js/main.js`, `web/index.html`)**: Extracted shared `stepDiscVisibleFraction`, `isDiscVisibleAny` (`fraction > 0`), and `isDiscVisibleMostly` (`fraction > 0.5`) helpers used identically by `summarize()` and the Site Picker map metric computation; added the segmented map metric selector (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`) with per-`region+height+window+metric` caching and dynamic colourbar legend/tooltip labels; and added `"Select brightest site"` and `"Select site with most Earth view"` buttons (`pickMaxMetricPoint()` breaking ties by proximity to region centre) with the required non-recommendation note and no combined score or `"best overall"` label.
+3. **Pipeline Check Order, Tests & Documentation (`scripts/build_datapack.py`, `tests/test_web.mjs`, `web/tests.html`, `docs/frontend_explained.md`, `README.md`)**: Reordered `main()` in `scripts/build_datapack.py` to load and validate `data_src/regions.json` before checking `LUNAR_DEM_PATH`; added map Earth-metric fixture checks, default-region checks, cache-key separation, and max-site picker checks in `tests/test_web.mjs` and `web/tests.html`; updated `docs/frontend_explained.md` and `README.md` (with DEM and no-DEM `pytest` instructions).

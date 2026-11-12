@@ -764,11 +764,6 @@ def main(argv: Optional[List[str]] = None):
     print("LUNAR DATA PACK PRECOMPUTATION (TASK 2B)")
     print("=" * 70)
 
-    dem_path = get_dem_path()
-    if dem_path is None or not dem_path.exists():
-        print("ERROR: LOLA DEM not found. Please set LUNAR_DEM_PATH.")
-        sys.exit(1)
-
     regions_json = Path("data_src/regions.json")
     if not regions_json.exists():
         print(f"ERROR: {regions_json} not found.")
@@ -781,6 +776,11 @@ def main(argv: Optional[List[str]] = None):
         validate_regions(regions)
     except ValueError as e:
         print(f"ERROR: {e}")
+        sys.exit(1)
+
+    dem_path = get_dem_path()
+    if dem_path is None or not dem_path.exists():
+        print("ERROR: LOLA DEM not found. Please set LUNAR_DEM_PATH.")
         sys.exit(1)
 
     web_data_dir = Path("web/data")

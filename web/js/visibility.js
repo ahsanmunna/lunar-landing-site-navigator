@@ -35,6 +35,25 @@ export function interpHorizon(hor, azDeg, azStepDeg = 1.0) {
 }
 
 /**
+ * Threshold predicates shared by summarize() and site-picker map metrics.
+ */
+export function isDiscVisibleAny(fraction) {
+  return fraction > 0.0;
+}
+
+export function isDiscVisibleMostly(fraction) {
+  return fraction > 0.5;
+}
+
+/**
+ * Compute single-step visible disc fraction for a celestial body against a horizon profile.
+ */
+export function stepDiscVisibleFraction(azDeg, elDeg, rDeg, hor, azStepDeg = 1.0) {
+  const hz = interpHorizon(hor, azDeg, azStepDeg);
+  return discVisibleFraction((elDeg - hz) / rDeg);
+}
+
+/**
  * Compute visible disc fraction time series for a celestial body against a horizon profile.
  */
 export function visibleFraction(azArray, elArray, rArray, hor, azStepDeg = 1.0) {
@@ -43,10 +62,8 @@ export function visibleFraction(azArray, elArray, rArray, hor, azStepDeg = 1.0) 
   const isScalarR = typeof rArray === "number";
 
   for (let i = 0; i < n; i++) {
-    const hz = interpHorizon(hor, azArray[i], azStepDeg);
     const r = isScalarR ? rArray : rArray[i];
-    const t = (elArray[i] - hz) / r;
-    out[i] = discVisibleFraction(t);
+    out[i] = stepDiscVisibleFraction(azArray[i], elArray[i], r, hor, azStepDeg);
   }
   return out;
 }
@@ -107,15 +124,15 @@ export function summarize({
     const s = sv[i];
     const e = ev[i];
     svSum += s;
-    if (s > 0.0) sunAnyCount += 1;
+    if (isDiscVisibleAny(s)) sunAnyCount += 1;
     if (s === 0.0) {
       sunCurDark += 1;
       if (sunCurDark > sunLongestDarkSteps) sunLongestDarkSteps = sunCurDark;
     } else {
       sunCurDark = 0;
     }
-    if (e > 0.0) earthAnyCount += 1;
-    if (e > 0.5) earthMostlyCount += 1;
+    if (isDiscVisibleAny(e)) earthAnyCount += 1;
+    if (isDiscVisibleMostly(e)) earthMostlyCount += 1;
     if (e === 0.0) {
       earthCurBlackout += 1;
       if (earthCurBlackout > earthLongestBlackoutSteps) earthLongestBlackoutSteps = earthCurBlackout;

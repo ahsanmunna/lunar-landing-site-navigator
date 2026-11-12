@@ -10,7 +10,7 @@ import { getCanvasPalette } from "./panorama.js";
 
 /**
  * Interactive Site Picker canvas displaying regions/<id>.png with manifest extent
- * and grid points coloured by illumination_avg_fraction.
+ * and grid points coloured by the selected map metric (0..1 fraction).
  */
 export function createSitePicker({ canvas, tooltipEl, onSelectPoint }) {
   let state = {
@@ -19,6 +19,7 @@ export function createSitePicker({ canvas, tooltipEl, onSelectPoint }) {
     points: [],
     selectedPoint: null,
     illuminationMap: null,
+    metricShortLabel: "Illum",
     gridSpacingM: 500,
     hoverPoint: null,
   };
@@ -271,13 +272,15 @@ export function createSitePicker({ canvas, tooltipEl, onSelectPoint }) {
       tooltipEl.hidden = true;
       return;
     }
-    const illum = state.illuminationMap?.get(pt.id);
-    const illumText = illum !== undefined ? `${(illum * 100).toFixed(1)}%` : "computing…";
-    tooltipEl.textContent = `${pt.id} • Illum: ${illumText} • Elev: ${pt.ground_height_m.toFixed(0)} m • Slope: ${pt.slope_deg.toFixed(1)}°`;
+    const metricVal = state.illuminationMap?.get(pt.id);
+    const valText = metricVal !== undefined ? `${(metricVal * 100).toFixed(1)}%` : "computing…";
+    const metricLabel = state.metricShortLabel || "Illum";
+    tooltipEl.textContent = `${pt.id} • ${metricLabel}: ${valText} • Elev: ${pt.ground_height_m.toFixed(0)} m • Slope: ${pt.slope_deg.toFixed(1)}°`;
     tooltipEl.hidden = false;
 
     const parentRect = canvas.parentElement.getBoundingClientRect();
-    const x = Math.min(parentRect.width - 180, Math.max(8, clientX - parentRect.left + 10));
+    const maxLeft = Math.max(8, parentRect.width - (tooltipEl.offsetWidth || 180) - 8);
+    const x = Math.min(maxLeft, Math.max(8, clientX - parentRect.left + 10));
     const y = Math.max(8, clientY - parentRect.top - 28);
     tooltipEl.style.left = `${x}px`;
     tooltipEl.style.top = `${y}px`;

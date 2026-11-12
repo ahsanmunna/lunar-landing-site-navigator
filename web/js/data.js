@@ -105,6 +105,19 @@ export function parseManifest(raw) {
 }
 
 /**
+ * Choose the default region ID on load: Malapert Massif if present, otherwise the first region.
+ */
+export function getDefaultRegionId(manifest) {
+  if (!manifest || !Array.isArray(manifest.regions) || manifest.regions.length === 0) {
+    return null;
+  }
+  const malapert = manifest.regions.find(
+    (r) => r.id === "malapert-massif" || r.name === "Malapert Massif",
+  );
+  return malapert ? malapert.id : manifest.regions[0].id;
+}
+
+/**
  * Find the default center point for a region (prefers `<id>-c`, otherwise closest point to center).
  */
 export function getRegionCenterPoint(manifest, regionId) {

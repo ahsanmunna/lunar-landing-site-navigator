@@ -12,7 +12,7 @@ If you are used to Python (`numpy`, `matplotlib`, CLI scripts):
 - **Binary buffers ≈ NumPy `.fromfile()`**: `fetch()` downloads `ephem.bin` and `horizons.bin` as raw `ArrayBuffer` byte blocks. We wrap them in `Float32Array` and `Int16Array` views (just like `np.fromfile(..., dtype="<f4")` and `dtype="<i2"`).
 - **DOM ≈ `print()` / HTML output**: Instead of printing text, `main.js` and `compare.js` update HTML elements (`document.getElementById(...)`) by setting `.textContent` or building table rows.
 - **Canvas 2D ≈ `matplotlib` figure**: `<canvas>` is a blank pixel surface. In `panorama.js` and `charts.js`, we clear the canvas and draw polygons, circles, and text onto `ctx = canvas.getContext("2d")`.
-- **Event loop & non-blocking chunks**: JavaScript runs UI rendering and computation on one main thread. Computing illumination for hundreds or thousands of grid sites over up to 90 days (`>= 3600 s` step) in a single loop would freeze button clicks, so `metrics.js` processes sites in timed chunks (`5 ms` budget) scheduled with `requestAnimationFrame` (falling back to `setTimeout(..., 0)` when RAF is unavailable) so the browser stays responsive, and `charts.js` batches site markers by colour bucket.
+- **Event loop & non-blocking chunks**: JavaScript runs UI rendering and computation on one main thread. Computing a map metric (`Sun illumination`, `Earth visible (any part)`, or `Earth more than half visible`) for hundreds or thousands of grid sites over up to 90 days (`>= 3600 s` step) in a single loop would freeze button clicks, so `metrics.js` processes sites in timed chunks (`5 ms` budget) scheduled with `requestAnimationFrame` (falling back to `setTimeout(..., 0)` when RAF is unavailable) so the browser stays responsive, and `charts.js` batches site markers by colour bucket.
 
 ---
 
@@ -56,10 +56,11 @@ web/data/horizons.bin   ──┘        │
 1. **Initial boot (`main.js` → `init()`)**:
    - `loadDataPack("data", onProgress)` fetches `manifest.json`, streams `ephem.bin` (`Float32Array` `[n_times][2][3]`), and streams `horizons.bin` (`Int16Array` `[n_points][n_heights][360]`).
    - All dimensions (`nPoints`, `nHeights`, `nAz`, `observer_heights_m`, `regions`) come dynamically from `manifest.json`.
-2. **Control changes (`region`, `observer height`, `start date`, `duration`)**:
+   - `getDefaultRegionId(manifest)` selects Malapert Massif (`malapert-massif`) and its centre (`malapert-massif-c`) on initial load if present, or falls back to the first region.
+2. **Control changes (`region`, `observer height`, `start date`, `duration`, `map metric`)**:
    - `syncDateBounds()` enforces `<input type="date">` `min`/`max` so the chosen duration never runs past the end of `ephem.bin`.
    - `evaluateCurrentSite()` calls `evaluateSite()` (`metrics.js`), which runs `computeSunEarthAzEl()` (`geometry.js`) and `summarize()` (`visibility.js`) for the currently selected point.
-   - `startLazyRegionIllumination()` schedules chunked background computation for every grid point in the current region so the site-picker map dots progressively fill with Viridis illumination colours (cached in `illuminationCache`).
+   - `startLazyRegionMap()` schedules chunked background computation for the active map metric (`sun_illumination`, `earth_any`, or `earth_mostly`) across every grid point in the current region so the site-picker map dots progressively fill with Viridis colours (cached in `mapValueCache` per `region + height + window + metric`) and enables `"Select brightest site"` / `"Select site with most Earth view"` once finished.
 3. **Time slider / timeline scrubbing (`tIdx`)**:
    - Moving `<input id="time-slider">` or dragging on either timeline strip calls `setTimeIndex(idx)`.
    - `updateTimeUI()` updates the **"Now" card** (`now-sun-pct`, `now-earth-pct`, az/el/radius), redraws the moving cursor on both timeline strips (`charts.js`), and updates `panorama.js` (blitting its cached static background and drawing only the clipped Sun and Earth discs at `tIdx`).
@@ -69,19 +70,20 @@ web/data/horizons.bin   ──┘        │
 ## 3. Per-File Guide & Main Functions
 
 ### `web/index.html`
-- **What it does**: Semantic single-page structure containing loading/error banners, control bar, site picker panel, horizon panorama panel + time slider + "Now" card, timeline strips, 6 summary metric cards, comparison section, `"How this works"` panel, and NASA credits footer.
+- **What it does**: Semantic single-page structure containing loading/error banners, control bar, site picker panel (with map metric selector, colourbar legend, and max-site picker buttons), horizon panorama panel + time slider + "Now" card, timeline strips, 6 summary metric cards, comparison section, `"How this works"` panel, and NASA credits footer.
 - **Note**: Uses relative paths (`css/style.css`, `js/main.js`) so it works both via `python -m http.server 8000` inside `web/` and on GitHub Pages. Includes `<link rel="icon" href="data:,">` to prevent `/favicon.ico` 404 console errors.
 
 ### `web/tests.html`
-- **What it does**: Browser verification runner. Loads `web/data/*` and `../tests/fixtures/reference.json`, executes JS unit checks and all 12 Python-vs-JS reference cases, and prints a PASS/FAIL table with max errors. Includes a manual file-picker fallback if served from inside `web/` (where `../tests/` is above the HTTP root).
+- **What it does**: Browser verification runner. Loads `web/data/*` and `../tests/fixtures/reference.json`, executes JS unit checks (including default-region and max-site tie-breaking) and all 12 Python-vs-JS reference cases (plus map Earth metrics vs summary), and prints a PASS/FAIL table with max errors. Includes a manual file-picker fallback if served from inside `web/` (where `../tests/` is above the HTTP root).
 
 ### `web/css/style.css`
-- **What it does**: Responsive layout (grid down to `360 px` mobile width), dark theme by default in `:root`, automatic light theme via `@media (prefers-color-scheme: light)`, colour-blind-safe domain variables (`--sun-color`, `--earth-color`, `--terrain-fill`), and focus outlines.
+- **What it does**: Responsive layout (grid down to `360 px` mobile width, with `align-items: start` on `.workspace-grid` so the Site Picker panel does not stretch vertically beside the timeline strips), dark theme by default in `:root`, automatic light theme via `@media (prefers-color-scheme: light)`, colour-blind-safe domain variables (`--sun-color`, `--earth-color`, `--terrain-fill`), and focus outlines.
 
 ### `web/js/data.js`
 - **What it does**: Fetches and validates `manifest.json`, decodes little-endian `ephem.bin` and `horizons.bin`, parses UTC dates, computes safe date-window indices, and caches `regions/<id>.png` images.
 - **Main functions**:
   - `parseManifest(raw)`: Builds `regionsById`, `pointsById`, `pointsByRegion`, and dynamic counts (`nPoints`, `nHeights`, `nAz`).
+  - `getDefaultRegionId(manifest)`: Selects `malapert-massif` if present in the manifest, otherwise `regions[0].id`.
   - `decodeEphemBuffer(buffer, manifest)` / `decodeHorizonsBuffer(buffer, manifest)`: Validates byte sizes and creates `Float32Array` / `Int16Array` views (little-endian safe).
   - `extractHorizonDeg(horizons, pointIndex, heightIndex)`: Returns a `Float64Array(nAz)` in degrees (`raw / 100`, handling `nodata = -32768`).
   - `getTimeRangeBounds(manifest, durationDays)` & `getTimeWindow(manifest, startStr, durationDays, stepSOverride)`: Maps UTC dates to `ephem.bin` slice indices.
@@ -102,18 +104,21 @@ web/data/horizons.bin   ──┘        │
 - **Main functions**:
   - `discVisibleFraction(t)`: Exact clipped circular disc area formula for normalized offset `t = (el - hz) / r`.
   - `interpHorizon(hor, azDeg, azStepDeg)`: Periodic linear interpolation across `0°–360°`.
+  - `stepDiscVisibleFraction(azDeg, elDeg, rDeg, hor, azStepDeg)`: Single-step visible fraction helper shared by `visibleFraction()`, `summarize()`, and the map metric evaluator.
+  - `isDiscVisibleAny(fraction)` (`fraction > 0.0`) & `isDiscVisibleMostly(fraction)` (`fraction > 0.5`): Exact threshold predicates shared by `summarize()` and the Site Picker map Earth metrics.
   - `visibleFraction(azArray, elArray, rArray, hor, azStepDeg)`: Computes `Float64Array` visible fractions over time.
   - `longestRun(arr, predicate)`: Counts longest consecutive run (used for continuous darkness and Earth blackout).
   - `summarize(...)`: Computes all 6 period metrics plus `horizon_min`, `horizon_max`, `sv`, and `ev`.
 
 ### `web/js/metrics.js`
-- **What it does**: Defines the 6 metric cards (labels, one-line help text, formatters), the colour-blind-safe Viridis colour ramp, and lazy region-wide illumination calculation.
+- **What it does**: Defines the 6 metric cards, the 3 Site Picker map metrics (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`), the colour-blind-safe Viridis colour ramp, lazy region-wide map computation, and the max-value site picker.
 - **Main exports & functions**:
-  - `METRIC_DEFINITIONS`, `EARTH_VISIBILITY_NOTE`, `DURATION_OPTIONS`.
-  - `viridisColor(t)`: Maps `0..1` illumination to a perceptual colour-blind-safe RGB colour.
+  - `METRIC_DEFINITIONS`, `MAP_METRICS`, `EARTH_VISIBILITY_NOTE`, `DURATION_OPTIONS`.
+  - `viridisColor(t)`: Maps `0..1` fraction to a perceptual colour-blind-safe RGB colour.
   - `evaluateSite(...)`: Runs `geometry.js` + `visibility.js` for the active site.
-  - `computePointIlluminationFraction(...)`: Allocation-free Sun-only illumination calculation used when scanning grid points across a region.
-  - `computeRegionIlluminationLazy(...)`: Computes grid-point illumination asynchronously in `requestAnimationFrame`-paced chunks (`chunkBudgetMs = 5.0`), caching by `(region, height, start, steps)`.
+  - `computePointMapMetric(...)` (and `computePointIlluminationFraction` wrapper): Allocation-free single-point calculation using `stepDiscVisibleFraction`, `isDiscVisibleAny`, and `isDiscVisibleMostly`.
+  - `computeRegionMapMetricLazy(...)` (and `computeRegionIlluminationLazy` wrapper): Computes the selected map metric asynchronously in `requestAnimationFrame`-paced chunks (`chunkBudgetMs = 5.0`), caching by `(region, height, start, steps, stride, metric)`.
+  - `pickMaxMetricPoint(points, valueMap, region)` & `formatMaxSelectedNote(nSites)`: Finds the maximum computed site (breaking ties by closest distance to region centre) and formats the non-recommendation note.
 
 ### `web/js/panorama.js`
 - **What it does**: Canvas 2D horizon panorama renderer.
@@ -127,7 +132,7 @@ web/data/horizons.bin   ──┘        │
 ### `web/js/charts.js`
 - **What it does**: Renders the interactive Site Picker map and the Sun/Earth timeline strip charts.
 - **Main functions**:
-  - `createSitePicker({ canvas, tooltipEl, onSelectPoint })`: Draws `regions/<id>.png` using `region.extent`, overlays grid dots coloured by illumination, handles click/hover/keyboard arrow selection, and renders a km scale bar.
+  - `createSitePicker({ canvas, tooltipEl, onSelectPoint })`: Draws `regions/<id>.png` using `region.extent`, overlays grid dots coloured by the active map metric, updates hover tooltips with the metric's short label, handles click/hover/keyboard arrow selection, and renders a km scale bar.
   - `createTimelineStrip({ canvas, colorVar, fallbackColor, showHalfLine, onScrub })`: Aggregates high-resolution time series into `[min, mean, max]` pixel columns (preventing short eclipses from disappearing on 365-day views), draws the time cursor, and handles pointer scrubbing.
 
 ### `web/js/compare.js`
@@ -136,7 +141,7 @@ web/data/horizons.bin   ──┘        │
   - `makeCompareKey(...)`, `createComparisonStore()`, `renderComparisonTable(...)`, `COMPARISON_TRADEOFF_NOTE`.
 
 ### `web/js/main.js`
-- **What it does**: Application coordinator wiring DOM controls, `ResizeObserver`, `prefers-color-scheme` theme updates, lazy illumination batches, playback timer, and comparison state.
+- **What it does**: Application coordinator wiring DOM controls, default Malapert Massif selection, map metric segmented control and legend updates, `"Select brightest site"` / `"Select site with most Earth view"` actions, `ResizeObserver`, `prefers-color-scheme` theme updates, lazy map batches, playback timer, and comparison state.
 
 ---
 

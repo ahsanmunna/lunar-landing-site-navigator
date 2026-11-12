@@ -93,6 +93,7 @@
     import {
       loadDataPack,
       extractHorizonDeg,
+      getDefaultRegionId,
       getTimeWindow,
     } from "./js/data.js";
     import {
@@ -107,6 +108,10 @@
       summarize,
       visibleFraction,
     } from "./js/visibility.js";
+    import {
+      computePointMapMetric,
+      pickMaxMetricPoint,
+    } from "./js/metrics.js";
 
     const TOL = {
       illum: 0.005,
@@ -164,6 +169,28 @@
         `expected 3.0, got ${hWrap}`,
       );
 
+      // 5. Default region selection and max-metric picker tie-breaking
+      const defWithMal = getDefaultRegionId({
+        regions: [{ id: "haworth", name: "Haworth" }, { id: "malapert-massif", name: "Malapert Massif" }],
+      });
+      const defFallback = getDefaultRegionId({
+        regions: [{ id: "haworth", name: "Haworth" }, { id: "slater-plain", name: "Slater Plain" }],
+      });
+      const pickedTie = pickMaxMetricPoint(
+        [
+          { id: "far", x_m: 3000, y_m: 0 },
+          { id: "near", x_m: 500, y_m: 0 },
+          { id: "low", x_m: 0, y_m: 0 },
+        ],
+        new Map([["far", 0.8], ["near", 0.8], ["low", 0.3]]),
+        { center_x_m: 0, center_y_m: 0 },
+      );
+      add(
+        "Default region & max-metric picker tie-break",
+        defWithMal === "malapert-massif" && defFallback === "haworth" && pickedTie?.id === "near",
+        `default=${defWithMal}/${defFallback}, maxTie=${pickedTie?.id}`,
+      );
+
       return checks;
     }
 
@@ -217,12 +244,37 @@
           azStepDeg: manifest.azStepDeg,
         });
 
+        const mapEarthAnyPct =
+          computePointMapMetric({
+            point: pt,
+            heightIdx: hIdx,
+            observerHeightM: c.observer_height_m,
+            timeWindow: tw,
+            manifest,
+            ephem,
+            horizons,
+            metric: "earth_any",
+          }) * 100.0;
+        const mapEarthMostlyPct =
+          computePointMapMetric({
+            point: pt,
+            heightIdx: hIdx,
+            observerHeightM: c.observer_height_m,
+            timeWindow: tw,
+            manifest,
+            ephem,
+            horizons,
+            metric: "earth_mostly",
+          }) * 100.0;
+
         const ref = c.summary;
         const dIllum = Math.abs(summary.illumination_avg_fraction - ref.illumination_avg_fraction);
         const dPct = Math.max(
           Math.abs(summary.sun_any_pct - ref.sun_any_pct),
           Math.abs(summary.earth_any_pct - ref.earth_any_pct),
           Math.abs(summary.earth_mostly_pct - ref.earth_mostly_pct),
+          Math.abs(mapEarthAnyPct - ref.earth_any_pct),
+          Math.abs(mapEarthMostlyPct - ref.earth_mostly_pct),
         );
         const stepHours = c.step_s / 3600.0;
         const dHours = Math.max(

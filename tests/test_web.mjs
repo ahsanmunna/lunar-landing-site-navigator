@@ -13,6 +13,7 @@ import {
   decodeEphemBuffer,
   decodeHorizonsBuffer,
   extractHorizonDeg,
+  getDefaultRegionId,
   getTimeRangeBounds,
   getTimeWindow,
 } from "../web/js/data.js";
@@ -32,9 +33,15 @@ import {
 import {
   METRIC_DEFINITIONS,
   EARTH_VISIBILITY_NOTE,
+  MAP_METRICS,
   computePointIlluminationFraction,
+  computePointMapMetric,
   getColorMapTimeWindow,
   computeRegionIlluminationLazy,
+  computeRegionMapMetricLazy,
+  pickMaxMetricPoint,
+  formatMaxSelectedNote,
+  makeMapCacheKey,
 } from "../web/js/metrics.js";
 import {
   COMPARISON_TRADEOFF_NOTE,
@@ -169,6 +176,91 @@ async function main() {
     assert.equal(w365.stride, Math.round(w365.stepS / manifest.ephemeris.step_s));
   });
 
+  check("default region picks Malapert Massif when present, else first region", () => {
+    assert.equal(getDefaultRegionId(manifest), "malapert-massif");
+    const fallbackManifest = {
+      regions: [{ id: "haworth", name: "Haworth" }, { id: "slater-plain", name: "Slater Plain" }],
+    };
+    assert.equal(getDefaultRegionId(fallbackManifest), "haworth");
+  });
+
+  check("map metric cache keys separate metrics and pickMaxMetricPoint breaks ties by centre", () => {
+    assert.deepEqual(
+      MAP_METRICS.map((m) => m.label),
+      ["Sun illumination", "Earth visible (any part)", "Earth more than half visible"],
+    );
+    const tw = getColorMapTimeWindow(manifest, "2027-01-01", 30);
+    const kSun = makeMapCacheKey({ regionId: "malapert-massif", heightIdx: 0, timeWindow: tw, metric: "sun_illumination" });
+    const kAny = makeMapCacheKey({ regionId: "malapert-massif", heightIdx: 0, timeWindow: tw, metric: "earth_any" });
+    const kMostly = makeMapCacheKey({ regionId: "malapert-massif", heightIdx: 0, timeWindow: tw, metric: "earth_mostly" });
+    assert.notEqual(kSun, kAny);
+    assert.notEqual(kAny, kMostly);
+
+    const synthReg = { center_x_m: 1000, center_y_m: 2000 };
+    const synthPts = [
+      { id: "far-tie", x_m: 3000, y_m: 2000 },
+      { id: "near-tie", x_m: 1500, y_m: 2000 },
+      { id: "lower", x_m: 1000, y_m: 2000 },
+    ];
+    const synthVals = new Map([
+      ["far-tie", 0.9],
+      ["near-tie", 0.9],
+      ["lower", 0.5],
+    ]);
+    assert.equal(pickMaxMetricPoint(synthPts, synthVals, synthReg).id, "near-tie");
+    assert.equal(
+      formatMaxSelectedNote(441),
+      "Selected: highest value among 441 grid sites in this region for this period and height. This is not a recommendation.",
+    );
+  });
+
+  check("map Earth-any and Earth-more-than-half match two fixture cases within 0.5 pp", () => {
+    const pickedCases = [
+      fixtures.find((c) => c.point_id === "malapert-massif-c" && c.observer_height_m === 1.0) || fixtures[0],
+      fixtures.find((c) => c.point_id === "mons-mouton-c" && c.observer_height_m === 1.0) || fixtures[1],
+    ];
+    const details = [];
+    for (const c of pickedCases) {
+      const pt = manifest.pointsById.get(c.point_id);
+      assert.ok(pt, `Missing fixture point ${c.point_id}`);
+      const hIdx = manifest.observer_heights_m.findIndex(
+        (h) => Math.abs(h - c.observer_height_m) < 1e-6,
+      );
+      assert.ok(hIdx >= 0, `Missing height ${c.observer_height_m}`);
+      const tw = getTimeWindow(manifest, c.start, c.days, c.step_s);
+
+      const earthAnyPct =
+        computePointMapMetric({
+          point: pt,
+          heightIdx: hIdx,
+          observerHeightM: c.observer_height_m,
+          timeWindow: tw,
+          manifest,
+          ephem,
+          horizons,
+          metric: "earth_any",
+        }) * 100.0;
+      const earthMostlyPct =
+        computePointMapMetric({
+          point: pt,
+          heightIdx: hIdx,
+          observerHeightM: c.observer_height_m,
+          timeWindow: tw,
+          manifest,
+          ephem,
+          horizons,
+          metric: "earth_mostly",
+        }) * 100.0;
+
+      const dAny = Math.abs(earthAnyPct - c.summary.earth_any_pct);
+      const dMostly = Math.abs(earthMostlyPct - c.summary.earth_mostly_pct);
+      assert.ok(dAny <= 0.5, `${c.point_id} earth_any diff ${dAny} > 0.5`);
+      assert.ok(dMostly <= 0.5, `${c.point_id} earth_mostly diff ${dMostly} > 0.5`);
+      details.push(`${c.point_id}: Δany=${dAny.toFixed(6)}, Δmostly=${dMostly.toFixed(6)}`);
+    }
+    return details.join("; ");
+  });
+
   // Async check for chunked lazy colour map, progress callbacks, and cancellation
   {
     const firstReg = manifest.regions[0];
@@ -200,6 +292,36 @@ async function main() {
     assert.ok(batchCount >= 1, "Expected chunked progress callbacks");
     assert.equal(completed.size, regPts.length);
 
+    const brightestPt = pickMaxMetricPoint(regPts, completed, firstReg);
+    const maxSun = Math.max(...regPts.map((p) => completed.get(p.id)));
+    assert.ok(brightestPt, "Expected brightest site to be selected");
+    assert.equal(completed.get(brightestPt.id), maxSun);
+
+    // Compute earth_any and earth_mostly on same region/window and verify separate cache entries & max picker
+    for (const metric of ["earth_any", "earth_mostly"]) {
+      const mMap = await new Promise((resolve) => {
+        computeRegionMapMetricLazy({
+          regionId: firstReg.id,
+          regionPoints: regPts,
+          heightIdx: 0,
+          observerHeightM: manifest.observer_heights_m[0],
+          timeWindow: mapTw,
+          manifest,
+          ephem,
+          horizons,
+          cache,
+          metric,
+          maxBatchSize: 48,
+          onDone: (fullMap) => resolve(fullMap),
+        });
+      });
+      assert.equal(mMap.size, regPts.length);
+      const maxPt = pickMaxMetricPoint(regPts, mMap, firstReg);
+      const maxVal = Math.max(...regPts.map((p) => mMap.get(p.id)));
+      assert.equal(mMap.get(maxPt.id), maxVal);
+    }
+    assert.equal(cache.size, 3);
+
     // Cancellation prevents further batches or completion
     const cancelCache = new Map();
     let afterCancelCalls = 0;
@@ -225,7 +347,7 @@ async function main() {
     await new Promise((r) => setTimeout(r, 40));
     assert.equal(afterCancelCalls, 0);
     assert.equal(cancelCache.size, 0);
-    console.log(`PASS  lazy colour map chunking (${batchCount} batches), progress, and cancel`);
+    console.log(`PASS  lazy colour map chunking (${batchCount} batches), 3-metric cache, max-site picker (${brightestPt.id} = ${(maxSun * 100).toFixed(1)}%), and cancel`);
   }
 
   // Reference fixtures (12 cases)

@@ -79,6 +79,11 @@
             <button id="reset-center-btn" type="button" class="btn btn-xs">Centre</button>
           </div>
 
+          <fieldset class="map-metric-fieldset">
+            <legend class="control-label">Map colour metric</legend>
+            <div id="map-metric-group" class="seg-group seg-group-compact" role="radiogroup" aria-label="Map colour metric"></div>
+          </fieldset>
+
           <div id="site-map-progress" class="map-progress" hidden>
             <div
               id="site-map-progress-track"
@@ -102,14 +107,24 @@
             <div id="site-map-tooltip" class="map-tooltip" hidden></div>
           </div>
 
-          <div class="colorbar-row" aria-label="Illumination availability colour scale">
+          <div id="colorbar-row" class="colorbar-row" aria-label="Sun illumination availability colour scale">
             <div class="colorbar-gradient"></div>
             <div class="colorbar-labels">
-              <span>0% sunlit</span>
-              <span>50%</span>
-              <span>100% sunlit</span>
+              <span id="colorbar-min">0% sunlit</span>
+              <span id="colorbar-mid">50%</span>
+              <span id="colorbar-max">100% sunlit</span>
             </div>
           </div>
+
+          <div class="map-pick-actions">
+            <button id="select-brightest-btn" type="button" class="btn btn-xs" disabled>
+              Select brightest site
+            </button>
+            <button id="select-earth-btn" type="button" class="btn btn-xs" disabled>
+              Select site with most Earth view
+            </button>
+          </div>
+          <p id="map-pick-note" class="info-note map-pick-note" hidden></p>
 
           <div class="site-props" aria-live="polite">
             <div class="prop-item prop-wide">
@@ -315,7 +330,7 @@
                 <strong>0.01-degree horizon quantization:</strong> Horizons are stored in 0.01 deg steps; this changes a single moment's visible fraction by up to ~0.01 at the Sun's edge and metrics by &lt; 0.001.
               </li>
               <li>
-                <strong>Geometric ephemeris (no light-time correction):</strong> SPICE vectors use <code>abcorr = "NONE"</code>; at lunar orbital speeds the light-time offset is under 0.001°, well below the ~0.53° solar disc diameter and 0.01° horizon storage precision.
+                <strong>Geometric ephemeris (no light-time or aberration correction):</strong> NAIF SPICE 'LT+S' directions differ from the geometric vectors used here by about 0.006 deg for the Sun and 0.0002 deg for Earth, far below the 0.53 deg solar disc diameter and the 0.01 deg horizon precision.
               </li>
               <li>
                 <strong>Approximate region boundaries:</strong> Region positions are approximate; boxes were measured on an annotated screenshot of NASA's map. Outputs support mission planning and trade studies rather than formal spacecraft landing hazard certification.

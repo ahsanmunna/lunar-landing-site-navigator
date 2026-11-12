@@ -1,6 +1,6 @@
 /**
  * Metric definitions, plain-language labels, Viridis colour scale, and lazy
- * region-wide illumination calculation for the site picker map.
+ * region-wide map metric calculation for the site picker map.
  */
 
 import {
@@ -10,8 +10,9 @@ import {
   computeSunEarthAzEl,
 } from "./geometry.js";
 import {
-  discVisibleFraction,
-  interpHorizon,
+  isDiscVisibleAny,
+  isDiscVisibleMostly,
+  stepDiscVisibleFraction,
   summarize,
 } from "./visibility.js";
 import { extractHorizonDeg, getTimeWindow } from "./data.js";
@@ -22,6 +23,61 @@ export const EARTH_VISIBILITY_NOTE =
 export const DURATION_OPTIONS = [7, 14, 30, 90, 365];
 export const MAP_COLOR_MIN_STEP_S = 3600;
 export const MAP_COLOR_MAX_DAYS = 90;
+
+export const DEFAULT_MAP_METRIC_ID = "sun_illumination";
+
+/**
+ * Site Picker map metric options; stepValue reuses visibility.js threshold functions
+ * used by summarize() so map colours and period metrics match identically.
+ */
+export const MAP_METRICS = [
+  {
+    id: "sun_illumination",
+    label: "Sun illumination",
+    shortLabel: "Illum",
+    bodyIdx: 0,
+    radiusKey: "sun_radius_km",
+    legendMin: "0% sunlit",
+    legendMid: "50%",
+    legendMax: "100% sunlit",
+    ariaLabel: "Sun illumination availability colour scale",
+    stepValue: (frac) => frac,
+  },
+  {
+    id: "earth_any",
+    label: "Earth visible (any part)",
+    shortLabel: "Earth (any)",
+    bodyIdx: 1,
+    radiusKey: "earth_radius_km",
+    legendMin: "0% Earth (any)",
+    legendMid: "50%",
+    legendMax: "100% of the time",
+    ariaLabel: "Geometric Earth visibility (any part) colour scale",
+    stepValue: (frac) => (isDiscVisibleAny(frac) ? 1.0 : 0.0),
+  },
+  {
+    id: "earth_mostly",
+    label: "Earth more than half visible",
+    shortLabel: "Earth (>50%)",
+    bodyIdx: 1,
+    radiusKey: "earth_radius_km",
+    legendMin: "0% Earth (>50%)",
+    legendMid: "50%",
+    legendMax: "100% of the time",
+    ariaLabel: "Earth more than half visible colour scale",
+    stepValue: (frac) => (isDiscVisibleMostly(frac) ? 1.0 : 0.0),
+  },
+];
+
+export const MAP_METRICS_BY_ID = new Map(MAP_METRICS.map((m) => [m.id, m]));
+
+export function getMapMetricDefinition(metricId) {
+  const def = MAP_METRICS_BY_ID.get(metricId);
+  if (!def) {
+    throw new Error(`Unknown map metric: "${metricId}"`);
+  }
+  return def;
+}
 
 /**
  * Exact 6 metric cards and one-line plain-language help descriptions.
@@ -191,10 +247,11 @@ export function evaluateSite({
 }
 
 /**
- * Compute only illumination_avg_fraction for a single grid point without allocating
- * per-step output arrays (shares geometry.js & visibility.js exact formulas).
+ * Compute a single site-picker map metric (fraction in [0, 1]) for one grid point
+ * without allocating per-step output arrays (reuses visibility.js exact step and
+ * threshold functions used by summarize()).
  */
-export function computePointIlluminationFraction({
+export function computePointMapMetric({
   point,
   heightIdx,
   observerHeightM,
@@ -202,10 +259,14 @@ export function computePointIlluminationFraction({
   manifest,
   ephem,
   horizons,
+  metric = DEFAULT_MAP_METRIC_ID,
 }) {
+  const metricDef = getMapMetricDefinition(metric);
   const hor = extractHorizonDeg(horizons, point.index, heightIdx);
   const moonRadiusM = manifest.constants.moon_radius_m;
-  const sunRadiusKm = manifest.constants.sun_radius_km;
+  const bodyRadiusKm = manifest.constants[metricDef.radiusKey];
+  const bodyOffset = metricDef.bodyIdx * 3;
+  const stepValue = metricDef.stepValue;
   const azStepDeg = manifest.azStepDeg;
 
   const { up, east, north } = siteLocalFrame(point.lat, point.lon);
@@ -225,9 +286,9 @@ export function computePointIlluminationFraction({
   const vecs = ephem.data;
   const { startIdx, nSteps, stride } = timeWindow;
 
-  let svSum = 0.0;
+  let sum = 0.0;
   for (let k = 0; k < nSteps; k++) {
-    const base = (startIdx + k * stride) * 6;
+    const base = (startIdx + k * stride) * 6 + bodyOffset;
     const vx = vecs[base] - rx;
     const vy = vecs[base + 1] - ry;
     const vz = vecs[base + 2] - rz;
@@ -245,20 +306,35 @@ export function computePointIlluminationFraction({
     if (az >= 360.0) az -= 360.0;
 
     const el = Math.asin(Math.max(-1.0, Math.min(1.0, dotU))) * RAD_TO_DEG;
-    const rDeg = Math.asin(Math.min(1.0, sunRadiusKm * invD)) * RAD_TO_DEG;
-    const hz = interpHorizon(hor, az, azStepDeg);
-    svSum += discVisibleFraction((el - hz) / rDeg);
+    const rDeg = Math.asin(Math.min(1.0, bodyRadiusKm * invD)) * RAD_TO_DEG;
+    const frac = stepDiscVisibleFraction(az, el, rDeg, hor, azStepDeg);
+    sum += stepValue(frac);
   }
 
-  return nSteps > 0 ? svSum / nSteps : 0.0;
+  return nSteps > 0 ? sum / nSteps : 0.0;
 }
 
 /**
- * Compute illumination_avg_fraction lazily across all grid points in a region in small
- * time-budgeted chunks, yielding to the browser between chunks and caching results per
- * (regionId, heightIdx, startIdx, nSteps, stride).
+ * Compute only illumination_avg_fraction for a single grid point without allocating
+ * per-step output arrays.
  */
-export function computeRegionIlluminationLazy({
+export function computePointIlluminationFraction(opts) {
+  return computePointMapMetric({ ...opts, metric: DEFAULT_MAP_METRIC_ID });
+}
+
+/**
+ * Build cache key per region + height + window + metric.
+ */
+export function makeMapCacheKey({ regionId, heightIdx, timeWindow, metric = DEFAULT_MAP_METRIC_ID }) {
+  return `${regionId}|${heightIdx}|${timeWindow.startIdx}|${timeWindow.nSteps}|${timeWindow.stride}|${metric}`;
+}
+
+/**
+ * Compute the selected map metric lazily across all grid points in a region in small
+ * time-budgeted chunks, yielding to the browser between chunks and caching results per
+ * (regionId, heightIdx, startIdx, nSteps, stride, metric).
+ */
+export function computeRegionMapMetricLazy({
   regionId,
   regionPoints,
   heightIdx,
@@ -268,12 +344,14 @@ export function computeRegionIlluminationLazy({
   ephem,
   horizons,
   cache,
+  metric = DEFAULT_MAP_METRIC_ID,
   onBatch,
   onDone,
   chunkBudgetMs = 5.0,
   maxBatchSize = 48,
 }) {
-  const cacheKey = `${regionId}|${heightIdx}|${timeWindow.startIdx}|${timeWindow.nSteps}|${timeWindow.stride}`;
+  getMapMetricDefinition(metric);
+  const cacheKey = makeMapCacheKey({ regionId, heightIdx, timeWindow, metric });
   if (cache.has(cacheKey)) {
     const cached = cache.get(cacheKey);
     if (onDone) onDone(cached, regionPoints.length);
@@ -312,7 +390,7 @@ export function computeRegionIlluminationLazy({
     let processedInChunk = 0;
     while (cursor < regionPoints.length) {
       const pt = regionPoints[cursor];
-      const frac = computePointIlluminationFraction({
+      const frac = computePointMapMetric({
         point: pt,
         heightIdx,
         observerHeightM,
@@ -320,6 +398,7 @@ export function computeRegionIlluminationLazy({
         manifest,
         ephem,
         horizons,
+        metric,
       });
       resultMap.set(pt.id, frac);
       cursor += 1;
@@ -353,4 +432,45 @@ export function computeRegionIlluminationLazy({
       scheduledHandle = null;
     }
   };
+}
+
+/**
+ * Backward-compatible alias for lazy Sun illumination map calculation.
+ */
+export function computeRegionIlluminationLazy(opts) {
+  return computeRegionMapMetricLazy({ metric: DEFAULT_MAP_METRIC_ID, ...opts });
+}
+
+/**
+ * Choose the grid point with the maximum computed value in `valueMap`,
+ * breaking ties by smallest squared distance to the region centre.
+ */
+export function pickMaxMetricPoint(points, valueMap, region) {
+  if (!points || points.length === 0 || !valueMap) return null;
+  const cx = region ? Number(region.center_x_m) : 0;
+  const cy = region ? Number(region.center_y_m) : 0;
+  let bestPt = null;
+  let bestVal = -Infinity;
+  let bestDist2 = Infinity;
+
+  for (const pt of points) {
+    const val = valueMap.get(pt.id);
+    if (val === undefined || !Number.isFinite(val)) continue;
+    const dx = pt.x_m - cx;
+    const dy = pt.y_m - cy;
+    const dist2 = dx * dx + dy * dy;
+    if (val > bestVal || (val === bestVal && dist2 < bestDist2)) {
+      bestVal = val;
+      bestDist2 = dist2;
+      bestPt = pt;
+    }
+  }
+  return bestPt;
+}
+
+/**
+ * Format the non-recommendation note shown when a max-metric site button is used.
+ */
+export function formatMaxSelectedNote(nSites) {
+  return `Selected: highest value among ${nSites} grid sites in this region for this period and height. This is not a recommendation.`;
 }

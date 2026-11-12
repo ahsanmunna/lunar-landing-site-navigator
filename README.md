@@ -85,14 +85,21 @@ python scripts/build_datapack.py --spacing 1000
 
 ### Python (`pytest`)
 
-Run the full Python test suite (with `LUNAR_DEM_PATH` set for DEM-dependent tests; those skip cleanly if unset):
+Run **without** the LOLA DEM (DEM-dependent tests skip cleanly; unit, SPICE ephemeris, data-pack validation/refusal, and fixture tests all run):
+
+```powershell
+Remove-Item Env:LUNAR_DEM_PATH -ErrorAction SilentlyContinue
+pytest -v
+```
+
+Run **with** the LOLA DEM (executes the full suite including DEM horizon regression and packed-vs-fresh horizon checks):
 
 ```powershell
 $env:LUNAR_DEM_PATH = "D:\path\to\LDEM_80S_20MPP_ADJ.tiff"
 pytest -v
 ```
 
-Run only the engine regression tests:
+Run only the engine regression tests (requires `LUNAR_DEM_PATH`):
 
 ```powershell
 pytest -v -k "test_regression"
@@ -119,10 +126,10 @@ Both verify JS outputs against Python SPICE/LOLA packed-horizon fixtures within:
 - **Local near-field terrain sensitivity (~100 m baseline)**: Terrain within ~100 m of the observer strongly controls positive horizon angles at 1 m or 5 m observer heights. Sub-20 m features (rocks, boulders, micro-craters) are not resolved in the 20 m DEM, and moving 10–20 m on steep crater rims can shift horizon cutoffs by several degrees.
 - **1-degree azimuthal discretization**: Terrain horizons are sampled at 360 integer-degree azimuths and linearly interpolated; spires or notches narrower than 1° may be smoothed.
 - **0.01-degree packed horizon storage**: Horizons in `web/data/horizons.bin` are stored as `int16` in `0.01 deg` steps; this changes a single moment's visible fraction by up to ~0.01 at the Sun's edge and period metrics by `< 0.001`.
-- **Geometric ephemeris (no light-time correction)**: SPICE vectors use `abcorr = "NONE"`. At lunar orbital speeds, light-time deflection is under `0.001°` (negligible relative to the ~0.53° solar disc and 0.01° horizon precision).
+- **Geometric ephemeris (no light-time or aberration correction)**: NAIF SPICE `'LT+S'` directions differ from the geometric vectors used here by about `0.006 deg` for the Sun and `0.0002 deg` for Earth, far below the `0.53 deg` solar disc diameter and the `0.01 deg` horizon precision.
 - **Approximate region boundaries**: Candidate region centres and radii are approximate positions intended for planning and trade studies rather than formal spacecraft landing hazard certification.
 - **Geometric Earth visibility**: Earth visibility metrics report geometric line of sight to Earth's disc, not a full RF/optical communications link budget.
-- **Map dot colour-map window**: To keep the browser responsive on large regions and long timelines, the Site Picker dot colour overlay uses a time step of at least 3600 s and a window capped at 90 days, while Period Summary Metrics, Panorama, and Timeline Strips always evaluate the full selected duration at 900 s resolution.
+- **Map dot colour-map window**: To keep the browser responsive on large regions and long timelines, the Site Picker dot colour overlay (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`) uses a time step of at least 3600 s and a window capped at 90 days, while Period Summary Metrics, Panorama, and Timeline Strips always evaluate the full selected duration at 900 s resolution.
 
 ## License
 
