@@ -4,7 +4,21 @@
 
 Built on NASA Lunar Orbiter Laser Altimeter (LOLA) 20 m South Polar topography and official NAIF SPICE ephemeris kernels, Lunar Landing Site Navigator computes 360-degree terrain horizons, solar illumination availability, and geometric Earth line-of-sight visibility across candidate lunar South Pole landing sites for 2027–2029. It is designed for mission planners, planetary scientists, engineers, students, and educators comparing local power, communications, and terrain trade-offs without installing specialized astrodynamics software. A Python analysis engine precomputes compact regional horizon and Moon-centred ephemeris data packs that a dependency-free static web application explores interactively in the browser.
 
-**Live demo:** https://github.com/ahsanmunna/lunar-landing-site-navigator
+**Live demo:** http://ahsanmunna.me/lunar-landing-site-navigator/web/index.html
+
+## Team and contributions
+
+Team Black Lotus built this project during NASA Space Apps 2026. Together we:
+
+- chose the challenge, defined the product concept and set the scope;
+- obtained and prepared the NASA data (LOLA DEM, SPICE kernels) and kept large files out of Git;
+- placed the nine Artemis III region centres by hand with `scripts/pick_regions.py`, and re-picked two after review;
+- reviewed every phase of the AI-generated work, ran all test suites and every data rebuild, and decided what to accept;
+- directed the interface redesign, checked the app in the browser, and published the repository and live demo.
+
+## Use of AI
+
+We used two AI tools: Google Antigravity (code generation) and Claude by Anthropic (technical supervision and code review). Antigravity wrote most of the code and documentation drafts from written task briefs; Claude wrote the briefs, reviewed code and reports, ran independent checks and flagged errors. Every Antigravity prompt is recorded verbatim in `docs/ai_log.md`. `docs/ai_use.md` explains what each tool did, the data they worked on, how we verified the results, and the AI mistakes we caught and corrected.
 
 ## What you can do
 
@@ -13,18 +27,19 @@ In the browser explorer (`web/index.html`), you can:
 - **Candidate region (`Candidate region`)**: Switch across the 9 precomputed Artemis III candidate landing regions (`web/data/manifest.json`). The full data pack (manifest.json, horizons.bin, ephem.bin; about 12 MB) loads once at start; each region's hillshade image loads on demand.
 - **Observer height (`Observer height`)**: Toggle observer height above local ground between `1 m` and `5 m`.
 - **Start date & duration (`Start date (UTC)`, `Duration`)**: Choose any UTC start date within the 2027–2029 ephemeris range and evaluate `7 days`, `14 days`, `30 days`, `90 days`, or `365 days (1 year)` windows at 15-minute (900 s) steps.
-- **Map colour metric (`Map colour metric`)**: Colour the clickable stereographic terrain hillshade grid by `Sun illumination`, `Earth visible (any part)`, or `Earth more than half visible` (computed over at most the first 90 days at 1 h steps; summary cards use the full selected period at 15 min steps), click any grid dot or `Centre` to reset, and read coordinates, ground height, ~100 m local slope, and horizon min/max.
+- **Map colour metric (`Map colour metric`)**: Colour the clickable stereographic terrain hillshade grid by `Sun illumination`, `Earth visible (any part)`, or `Earth more than half visible` (computed over at most the first 90 days at 1 h steps; the period metrics use the full selected period at 15 min steps), click any grid dot or `Centre` to reset, and read coordinates, ground height, ~100 m local slope, and horizon min/max.
 - **Select-highest buttons**: Jump directly to grid extremes with `Select brightest site` or `Select site with most Earth view` (explicitly marked in the UI as a quick selection helper, not a recommendation).
-- **Panorama with Sun and Earth discs (`Horizon Panorama`)**: Inspect the 360° terrain horizon profile (0° = outward-radial north, clockwise) with horizon-clipped Sun and Earth discs at the active instant, using `Full 360°`, `Zoom Sun (1:1)`, or `Zoom Earth (1:1)` view modes.
-- **Time slider & timeline strips**: Scrub through the window with the time slider, `‹` / `›` step buttons, `Play` / `Pause` playback, or clickable/draggable `Sun visible fraction` and `Earth visible fraction (dashed line = 50% threshold)` strips while reading instantaneous Sun/Earth visible disc percentages, azimuth, elevation, and angular radius.
-- **Six metric cards (`Period Summary Metrics`)**: Inspect full-period 15-minute metrics for the selected grid site:
+- **Panorama with Sun and Earth discs (`Horizon panorama`)**: Inspect the 360° terrain horizon profile (0° = outward-radial north, clockwise) with horizon-clipped Sun and Earth discs at the active instant, using `Full 360°`, `Zoom Sun (1:1)`, or `Zoom Earth (1:1)` view modes.
+- **Time slider & visibility timelines**: Scrub through the window with the time slider, `‹` / `›` step buttons, `Play` / `Pause` playback, or the clickable/draggable `Sun visible fraction` and `Earth visible fraction (dashed line = 50% threshold)` timelines, while reading instantaneous Sun/Earth visible disc percentages, azimuth, elevation, and angular radius.
+- **Six period metrics (`Period summary metrics`)**: Inspect full-period 15-minute metrics for the selected grid site (each metric has a `?` help icon with a one-line explanation):
   1. `Illumination availability` — Average fraction of the solar disc visible over the selected period.
   2. `Sun visible (any part)` — Share of time when at least part of the Sun rises above terrain.
   3. `Longest continuous darkness` — Longest unbroken stretch with zero direct sunlight.
   4. `Geometric Earth visibility (any part of the disc)` — Share of time when any part of Earth has line of sight above terrain (geometric line of sight, not a radio link budget).
   5. `Earth more than half visible` — Share of time when over half of Earth's disc clears the horizon.
   6. `Longest Earth-visibility blackout` — Longest unbroken period with zero geometric line of sight to Earth.
-- **Comparison of up to 3 configurations (`Site Comparison (up to 3 configurations)`)**: Save configurations with `Add to comparison` and inspect up to 3 side-by-side across region, grid site ID, coordinates, observer height, UTC date window, and all six metrics (with inline bars, `Remove`, and `Clear all`), without an overall score or single "best" ranking.
+- **Comparison of up to 3 configurations (`Site comparison`)**: Save configurations with `Add to comparison` and inspect up to 3 side-by-side across region, grid site ID, coordinates, observer height, UTC date window, and all six metrics (with inline bars, `Remove`, and `Clear all`), without an overall score or single "best" ranking.
+- **Method, data sources and limitations**: A collapsed panel at the bottom of the page with the method, data sources, and known limitations.
 
 ## How it works
 
@@ -50,7 +65,7 @@ In the browser explorer (`web/index.html`), you can:
 ├── data_src/                   # Region names and candidate region centres/radii
 ├── kernels/                    # NAIF SPICE kernels (.tls and .tf kernels are in the repo; de440.bsp and moon_pa_de440_200625.bpc are NOT: too large, download them)
 ├── tests/                      # pytest suite, Node web test runner (test_web.mjs), reference fixtures
-├── docs/                       # Validation report, data sources, format spec, frontend guide, AI log
+├── docs/                       # Validation report, data sources, format spec, frontend guide, AI log and AI use
 ├── analyze_site.py             # Single-site Python CLI
 ├── requirements.txt            # Python dependencies
 └── LICENSE                     # Apache-2.0
@@ -88,7 +103,7 @@ Then open:
 
 ### 2. Python Environment & CLI (`analyze_site.py`)
 
-Requires tested with Python 3.13.7 (and tested with Node v24.18.0 if running the CLI JS test runner):
+Tested with Python 3.13.7. Node.js is only needed for `node tests/test_web.mjs` (tested with Node v24.18.0).
 
 ```powershell
 pip install -r requirements.txt
@@ -174,15 +189,11 @@ See [docs/data_sources.md](docs/data_sources.md) for the full inventory of datas
 - **Geometric ephemeris (no light-time or aberration correction)**: NAIF SPICE `'LT+S'` directions differ from the geometric vectors used here by about `0.006 deg` for the Sun and `0.0002 deg` for Earth, far below the `0.53 deg` solar disc diameter and the `0.01 deg` horizon precision.
 - **Approximate region boundaries**: Candidate region centres and radii are approximate positions intended for planning and trade studies rather than formal spacecraft landing hazard certification.
 - **Geometric Earth visibility**: Earth visibility metrics report geometric line of sight to Earth's disc, not a full RF/optical communications link budget.
-- **Map dot colour-map window**: To keep the browser responsive on large regions and long timelines, the Site Picker dot colour overlay (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`) uses a time step of at least 3600 s and a window capped at 90 days, while Period Summary Metrics, Panorama, and Timeline Strips always evaluate the full selected duration at 900 s resolution.
+- **Map dot colour-map window**: To keep the browser responsive on large regions and long timelines, the Site Picker dot colour overlay (`Sun illumination`, `Earth visible (any part)`, `Earth more than half visible`) uses a time step of at least 3600 s and a window capped at 90 days, while the period summary metrics, panorama, and visibility timelines always evaluate the full selected duration at 900 s resolution.
 
 ## Region positions
 
 Region centres were picked with scripts/pick_regions.py from box positions measured on an annotated screenshot of NASA's Artemis III candidate-region map; they are approximate. An earlier AI-generated set of coordinates was discarded.
-
-## Use of AI
-
-AI tools were used in this project: Google Antigravity (code generation) and Claude by Anthropic (technical supervision and code review). Antigravity wrote the Python engine, the data-pack builder, the region picker, the web app and documentation drafts from written task briefs. Claude wrote the briefs, reviewed code and reports, ran independent checks and flagged errors. Every Antigravity prompt is recorded verbatim, with a summary of changes, in docs/ai_log.md. A fuller account (what each tool did, the data they worked on, human verification steps and AI mistakes that were caught and corrected) is in docs/ai_use.md. The project owner chose the challenge, placed the region centres with the picker, ran every test and rebuild, and made the final decisions.
 
 ## Credits
 
