@@ -486,3 +486,129 @@ WHEN DONE: list exactly which files you changed, and the test outputs.
 2. **Map Legend Caption (`web/index.html`, `web/css/style.css`)**: Added `#map-legend-caption` below `#colorbar-row` explaining `"Map colours use at most the first 90 days at 1 h steps; the cards below use your full period at 15 min steps."`.
 3. **Tests & Documentation (`tests/test_web.mjs`, `web/tests.html`, `docs/frontend_explained.md`, `docs/ai_log.md`)**: Updated `tests/test_web.mjs` and `web/tests.html` to test `formatMaxSelectedNote` for both 30-day and 365-day windows plus verify the map legend caption in `web/index.html`, and updated `docs/frontend_explained.md`.
 
+---
+
+## Phase 3: Project Documentation, Validation & Data Inventory
+
+### Prompt
+
+```text
+PHASE 3 (documentation only; stay strictly inside this scope).
+ALLOWED FILES: README.md, docs/validation.md (new), docs/data_sources.md (new), docs/ai_log.md (append only).
+Do NOT edit code, tests, data, or anything under web/, lunar_engine/, scripts/, data_src/. Do NOT run git.
+Every statement must be traceable to a file in this repo or a command you actually ran. Do not invent numbers.
+
+TASKS:
+1. README.md: rewrite the top as a project page: title; a 3-sentence summary (what it does, who it is for, NASA data
+   first); "NASA International Space Apps Challenge 2026 - Lunar Landing Site Navigator"; a "Live demo" line with
+   the text LIVE_DEMO_URL_TODO; "What you can do" matching the UI exactly (region dropdown, observer height 1 m / 5 m,
+   start date, duration, map colour metric, select-highest buttons, panorama with Sun and Earth discs, time slider,
+   six metric cards, comparison of up to 3 configurations); "How it works" in 6 short steps (reuse the wording in
+   web/index.html); keep Run locally, Tests, Data sources and Limitations; add a "Region positions" paragraph:
+   "Region centres were picked with scripts/pick_regions.py from box positions measured on an annotated screenshot of
+   NASA's Artemis III candidate-region map; they are approximate. An earlier AI-generated set of coordinates was
+   discarded."; add "Use of AI" pointing to docs/ai_log.md; add Credits (NASA LOLA via PGDA, NAIF SPICE).
+2. docs/validation.md: list every validation we have, naming the test file and test, what it proves, and its
+   tolerance: SPICE sub-solar and sub-Earth check vs LRO values, angular radius from distance, geometry round trips,
+   packed vs fresh horizons within 0.011 deg, ephemeris vs SPICE within 1e-3 km, JS vs Python on the 12 fixture
+   cases (run node tests/test_web.mjs and quote its max-error line), and the two DEM regression sites. Add
+   "Not validated": no comparison against NASA PGDA illumination or Earth-visibility maps; Earth visibility is
+   geometric, not a radio link; DEM resolution limits; region positions approximate.
+3. docs/data_sources.md: a table of every dataset and every software dependency: name, provider, project files, what it
+   is used for, where to get it (only a link that already appears in this repo's docs; otherwise "see provider site"),
+   licence. Read Python package licences with importlib.metadata or pip show, not from memory. State whether the web app
+   uses any third-party JavaScript (verify by grepping web/ for script and link tags that load external URLs).
+4. Append this prompt verbatim to docs/ai_log.md with a short summary.
+WHEN DONE: list exactly the files you changed and anything you could not verify.
+```
+
+### Phase 3 Summary
+1. **`README.md` (edited)**: Rewrote the top as a project page (`Lunar Landing Site Navigator`, `"NASA International Space Apps Challenge 2026 - Lunar Landing Site Navigator"`, 3-sentence summary leading with NASA LOLA/SPICE data, `LIVE_DEMO_URL_TODO`, `"What you can do"` matching the UI controls/views/metrics/comparison in `web/index.html`, and 6-step `"How it works"` reusing `web/index.html` wording), preserved `Run locally`, `Tests`, `Data sources`, `Limitations`, and `License`, and added `Region positions`, `Use of AI` (`docs/ai_log.md`), and `Credits`.
+2. **`docs/validation.md` (created)**: Documented every validation check across `tests/test_ephemeris.py`, `tests/test_geometry.py`, `tests/test_visibility.py`, `tests/test_datapack.py`, `tests/test_pick_regions.py`, `tests/test_regression.py`, `tests/test_web.mjs`, and `web/tests.html` with exact test names, proven invariants, configured tolerances, observed `node tests/test_web.mjs` max-error output and `pytest -v` pass count, plus a `Not validated` section covering PGDA map non-comparison, geometric vs radio visibility, DEM/horizon discretization limits, and approximate digitized region centres.
+3. **`docs/data_sources.md` (created)**: Inventoried all external datasets/SPICE kernels and software dependencies (`numpy`, `scipy`, `rasterio`, `spiceypy`, `matplotlib`, `pytest`, Python stdlib/runtime, Node.js test runner) using `importlib.metadata` / `pip show` and direct import audits, marked external URLs as `see provider site`, and documented the `web/` grep confirmation that zero third-party JavaScript or external stylesheet URLs are loaded.
+4. **`docs/ai_log.md` (appended)**: Appended the verbatim Phase 3 prompt and completion summary with zero modifications to code, tests, data, or earlier log entries.
+
+
+## Phase 3.1: Documentation Corrections
+
+### Prompt (Verbatim)
+
+```text
+PHASE 3.1 (documentation corrections; stay strictly inside this scope).
+ALLOWED FILES: README.md, docs/validation.md, docs/data_sources.md, docs/ai_log.md (append only), web/index.html
+(ONLY the footer GitHub link). Do NOT edit any other file. Do NOT run any git command.
+Every statement must be traceable to a file you read or a command you ran.
+
+1. README.md:
+ a. In "What you can do", replace the claim about lazily loading terrain/horizon chunks with: "The full data pack
+    (manifest.json, horizons.bin, ephem.bin; about 12 MB) loads once at start; each region's hillshade image loads
+    on demand." Read web/js/data.js to confirm before writing.
+ b. Use the real panorama heading from web/index.html (grep the <h2> text), not "Sky & Terrain Horizon Panorama".
+ c. Project Structure: change the kernels/ line to say the .tls and .tf kernels are in the repo and de440.bsp and
+    moon_pa_de440_200625.bpc are NOT (too large; download them).
+ d. Add a section "Get the data (Python side only)" with PowerShell commands (Invoke-WebRequest -OutFile kernels\...) for
+    these exact URLs and nothing else:
+    https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
+    https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de440_200625.bpc
+    https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+    https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/a_old_versions/moon_de440_220930.tf
+    and the DEM: https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/LDEM_80S_20MPP_ADJ.TIF (about 2.6 GB; set LUNAR_DEM_PATH).
+    State that the web app needs none of these.
+ e. Replace "Python 3.10+" and "Node.js 18+" with "tested with Python 3.13.7" and "tested with Node v24.18.0".
+ f. Credits: add the data usage citation requested by NASA PGDA: Barker, M. K., et al., 2023, Planetary Science Journal,
+    4, 183, https://doi.org/10.3847/PSJ/acf3e1 ; data DOI 10.60903/gsfcpgda-lola-spole ; product page
+    https://pgda.gsfc.nasa.gov/products/90
+ g. Replace the whole "Use of AI" section with exactly:
+    "AI tools were used in this project: Google Antigravity (code generation) and Claude by Anthropic (technical
+    supervision and code review). Antigravity wrote the Python engine, the data-pack builder, the region picker, the
+    web app and documentation drafts from written task briefs. Claude wrote the briefs, reviewed code and reports,
+    ran independent checks and flagged errors. Every Antigravity prompt is recorded verbatim, with a summary of changes,
+    in docs/ai_log.md. A fuller account (what each tool did, the data they worked on, human verification steps and AI
+    mistakes that were caught and corrected) is in docs/ai_use.md. The project owner chose the challenge, placed the
+    region centres with the picker, ran every test and rebuild, and made the final decisions."
+ h. Leave the text LIVE_DEMO_URL_TODO exactly as it is.
+2. docs/validation.md: remove all run timings (for example "in 21.48s"). Read tests/fixtures/reference.json and state the
+   REAL start dates, durations and step sizes of the 12 cases (do not claim 7-90 day windows). Add to "Not Validated":
+   (a) JS-vs-Python parity validates the port, not the underlying physics; (b) the SPICE-vs-LRO check covers one epoch;
+   (c) PGDA states its DEM is in the MOON_ME frame of the DE421 ephemeris while this project uses the DE440 MOON_ME frame
+   kernel; the difference was not quantified in this repository.
+3. docs/data_sources.md: replace every "see provider site" for the four SPICE kernels and the DEM with the URLs from
+   item 1d; for the DEM licence cell write "NASA data; cite Barker et al. 2023 as requested on the PGDA product page
+   (https://pgda.gsfc.nasa.gov/products/90)". Fix region_names.txt to region_names.json. Add the NASA Artemis III map row:
+   source "NASA Artemis III candidate-region map (exact image file not stored in this repo)". Update the footer-link
+   paragraph to the real URL used in item 4. Keep the verified Python package licences as they are.
+4. web/index.html: replace the footer link target https://github.com/your-username/lunar-landing-site-navigator with
+   https://github.com/ahsanmunna/lunar-landing-site-navigator and the link text "GitHub Repository (placeholder link)"
+   with "GitHub repository". Change nothing else.
+5. Run node tests/test_web.mjs and pytest (with and without LUNAR_DEM_PATH). Append this prompt verbatim to
+   docs/ai_log.md with a short summary.
+WHEN DONE: list exactly which files you changed, the test outputs, and anything you could not verify.
+```
+
+### Phase 3.1 Summary
+1. **`README.md` (edited)**:
+   - Updated "What you can do" region item to state that the full data pack (manifest.json, horizons.bin, ephem.bin; about 12 MB) loads once at start while each region's hillshade image loads on demand, verified against `web/js/data.js`.
+   - Updated the panorama heading to `"Horizon Panorama"`, matching the `<h2>` text in `web/index.html`.
+   - Updated Project Structure to clarify that `.tls` and `.tf` kernels are in the repository while `de440.bsp` and `moon_pa_de440_200625.bpc` are not bundled due to file size.
+   - Added `"Get the data (Python side only)"` section with exact PowerShell `Invoke-WebRequest` download commands for the four SPICE kernels and the 2.6 GB LOLA DEM, noting that the web app needs none of them.
+   - Replaced version requirement claims with `"tested with Python 3.13.7"` and `"tested with Node v24.18.0"`.
+   - Added the Barker et al. (2023) PGDA citation and product DOI/link under Credits.
+   - Replaced `"Use of AI"` with the exact requested attribution text referencing Antigravity, Claude, `docs/ai_log.md`, and `docs/ai_use.md`.
+   - Preserved `LIVE_DEMO_URL_TODO` verbatim.
+2. **`docs/validation.md` (edited)**:
+   - Removed all run timings (e.g. `"in 21.48s"`).
+   - Replaced the inaccurate `"7–90 day windows"` description with the real parameters of the 12 reference fixture cases in `tests/fixtures/reference.json`: all start on `2027-01-01`, span `30.0` days (30 days), and use a step size of `900.0 s` (15 minutes).
+   - Added points (a), (b), and (c) to `"Not Validated"`: JS-vs-Python parity validates the software port rather than underlying physics; the SPICE-vs-LRO alignment check covers a single epoch; and the PGDA DEM DE421 MOON_ME vs DE440 MOON_ME frame kernel difference was not quantified in this repository.
+3. **`docs/data_sources.md` (edited)**:
+   - Replaced `"see provider site"` for the 4 SPICE kernels and DEM with direct NAIF/PGDA download URLs.
+   - Updated DEM licence cell to cite Barker et al. (2023) as requested by NASA PGDA.
+   - Corrected `region_names.txt` to `region_names.json`.
+   - Added the NASA Artemis III map row with source `"NASA Artemis III candidate-region map (exact image file not stored in this repo)"`.
+   - Updated the footer link paragraph to the real GitHub URL (`https://github.com/ahsanmunna/lunar-landing-site-navigator`).
+   - Kept all verified Python package licences as they were.
+4. **`web/index.html` (edited)**:
+   - Replaced footer link target `https://github.com/your-username/lunar-landing-site-navigator` with `https://github.com/ahsanmunna/lunar-landing-site-navigator` and link text `"GitHub Repository (placeholder link)"` with `"GitHub repository"`. No other changes.
+5. **Verification & Tests**:
+   - `node tests/test_web.mjs`: ALL WEB JS TESTS PASSED (12 unit checks + 12 fixture parity cases; max errors `Δillum=0.000000, Δpct=0.0000, Δh=0.00h, Δaz=0.00005°, Δel=0.00005°, Δvis=0.000001`).
+   - `pytest -v` without `LUNAR_DEM_PATH`: `53 passed, 3 skipped in 18.77s`.
+   - `pytest -v` with `LUNAR_DEM_PATH`: `56 passed in 15.80s`.
