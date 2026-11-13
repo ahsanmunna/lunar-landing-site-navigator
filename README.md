@@ -4,7 +4,7 @@
 
 Built on NASA Lunar Orbiter Laser Altimeter (LOLA) 20 m South Polar topography and official NAIF SPICE ephemeris kernels, Lunar Landing Site Navigator computes 360-degree terrain horizons, solar illumination availability, and geometric Earth line-of-sight visibility across candidate lunar South Pole landing sites for 2027–2029. It is designed for mission planners, planetary scientists, engineers, students, and educators comparing local power, communications, and terrain trade-offs without installing specialized astrodynamics software. A Python analysis engine precomputes compact regional horizon and Moon-centred ephemeris data packs that a dependency-free static web application explores interactively in the browser.
 
-**Live demo:** LIVE_DEMO_URL_TODO
+**Live demo:** [LIVE_DEMO_URL_TODO](https://github.com/ahsanmunna/lunar-landing-site-navigator)
 
 ## What you can do
 
