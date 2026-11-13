@@ -105,31 +105,45 @@ async function init() {
   els.earthNote.textContent = EARTH_VISIBILITY_NOTE;
   els.compareTradeoffNote.textContent = COMPARISON_TRADEOFF_NOTE;
 
-  // Build metric card skeletons once so updates only swap text values
+  // Build compact metric rows once so updates only swap text values
   const metricValueEls = new Map();
   const metricSubEls = new Map();
   for (const def of METRIC_DEFINITIONS) {
-    const card = document.createElement("article");
-    card.className = `metric-card metric-${def.accent}`;
+    const row = document.createElement("div");
+    row.className = "metric-row";
 
-    const title = document.createElement("h3");
-    title.className = "metric-label";
-    title.textContent = def.label;
+    const labelWrap = document.createElement("div");
+    labelWrap.className = "metric-label-wrap";
 
-    const val = document.createElement("div");
+    const label = document.createElement("span");
+    label.className = "metric-label";
+    label.textContent = def.label;
+
+    const helpBtn = document.createElement("button");
+    helpBtn.type = "button";
+    helpBtn.className = "metric-help-btn";
+    helpBtn.textContent = "?";
+    helpBtn.title = def.help;
+    helpBtn.setAttribute("data-tooltip", def.help);
+    helpBtn.setAttribute("aria-label", `${def.label}: ${def.help}`);
+
+    labelWrap.append(label, helpBtn);
+
+    const dataWrap = document.createElement("div");
+    dataWrap.className = "metric-data-wrap";
+
+    const val = document.createElement("span");
     val.className = "metric-value";
     val.textContent = "—";
 
-    const sub = document.createElement("div");
+    const sub = document.createElement("span");
     sub.className = "metric-sub";
     sub.textContent = "";
 
-    const help = document.createElement("p");
-    help.className = "metric-help";
-    help.textContent = def.help;
+    dataWrap.append(val, sub);
+    row.append(labelWrap, dataWrap);
 
-    card.append(title, val, sub, help);
-    els.metricsGrid.appendChild(card);
+    els.metricsGrid.appendChild(row);
     metricValueEls.set(def.key, val);
     metricSubEls.set(def.key, sub);
   }
@@ -736,6 +750,15 @@ async function init() {
     renderComparison();
   });
 
+  const howDetails = byId("how-this-works");
+  if (howDetails) {
+    document.querySelectorAll('a[href="#how-this-works"]').forEach((a) => {
+      a.addEventListener("click", () => {
+        howDetails.open = true;
+      });
+    });
+  }
+
   // Re-render canvases cleanly on resize and OS theme switches
   const resizeObserver = new ResizeObserver(() => {
     if (state.evaluation) {
@@ -745,6 +768,7 @@ async function init() {
   });
   resizeObserver.observe(els.panoramaCanvas);
   resizeObserver.observe(els.siteMapCanvas);
+  if (els.sunStripCanvas) resizeObserver.observe(els.sunStripCanvas);
 
   const themeQuery = window.matchMedia("(prefers-color-scheme: light)");
   if (themeQuery.addEventListener) {

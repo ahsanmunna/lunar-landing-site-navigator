@@ -10,11 +10,9 @@
 <body>
   <div class="page-wrap">
     <header class="site-header">
-      <div>
+      <div class="header-main">
         <h1 class="site-title">Lunar Landing Site Navigator</h1>
-        <p class="site-subtitle">
-          South Polar terrain horizons, solar illumination, and geometric Earth line of sight (2027–2029)
-        </p>
+        <p class="site-subtitle">South pole terrain horizons, Sun and Earth, 2027–2029</p>
       </div>
       <nav class="header-links" aria-label="Secondary links">
         <a href="#how-this-works">How this works</a>
@@ -72,12 +70,10 @@
         <!-- 2. Site Picker -->
         <section class="panel" aria-label="Site picker">
           <div class="panel-head">
-            <div>
-              <h2 class="panel-title">Site Picker</h2>
-              <p id="site-map-status" class="panel-sub">Click a point or use arrow keys</p>
-            </div>
+            <h2 class="panel-title">Site picker</h2>
             <button id="reset-center-btn" type="button" class="btn btn-xs">Centre</button>
           </div>
+          <p id="site-map-status" class="panel-sub"></p>
 
           <fieldset class="map-metric-fieldset">
             <legend class="control-label">Map colour metric</legend>
@@ -153,140 +149,125 @@
           </div>
         </section>
 
-        <!-- 3 + 5: Horizon Panorama + Time Slider + Timeline Strips -->
-        <div class="stack-col">
-          <section class="panel" aria-label="Horizon panorama">
-            <div class="panel-head">
-              <div>
-                <h2 class="panel-title">Horizon Panorama</h2>
-                <p class="panel-sub">Azimuth 0–360° (0° = outward-radial north, clockwise)</p>
-              </div>
-              <div class="pano-toolbar" role="group" aria-label="Panorama zoom view">
-                <button type="button" class="btn btn-xs" data-pano-view="full" aria-pressed="true">Full 360°</button>
-                <button type="button" class="btn btn-xs" data-pano-view="zoom-sun" aria-pressed="false">Zoom Sun (1:1)</button>
-                <button type="button" class="btn btn-xs" data-pano-view="zoom-earth" aria-pressed="false">Zoom Earth (1:1)</button>
-              </div>
+        <!-- 3: Horizon Panorama + Time Slider -->
+        <section class="panel pano-panel" aria-label="Horizon panorama">
+          <div class="panel-head">
+            <h2 class="panel-title">Horizon panorama</h2>
+            <div class="pano-toolbar" role="group" aria-label="Panorama zoom view">
+              <button type="button" class="btn btn-xs" data-pano-view="full" aria-pressed="true">Full 360°</button>
+              <button type="button" class="btn btn-xs" data-pano-view="zoom-sun" aria-pressed="false">Zoom Sun (1:1)</button>
+              <button type="button" class="btn btn-xs" data-pano-view="zoom-earth" aria-pressed="false">Zoom Earth (1:1)</button>
             </div>
+          </div>
 
-            <div class="legend-inline">
-              <span class="legend-item"><span class="swatch swatch-sun"></span> Sun disc &amp; track</span>
-              <span class="legend-item"><span class="swatch swatch-earth"></span> Earth disc &amp; track</span>
-              <span class="legend-item"><span class="swatch swatch-terrain"></span> Terrain horizon silhouette</span>
-            </div>
+          <div class="legend-inline">
+            <span class="legend-item"><span class="swatch swatch-sun"></span> Sun disc &amp; track</span>
+            <span class="legend-item"><span class="swatch swatch-earth"></span> Earth disc &amp; track</span>
+            <span class="legend-item"><span class="swatch swatch-terrain"></span> Terrain horizon silhouette</span>
+          </div>
 
-            <div class="pano-canvas-wrap">
-              <canvas
-                id="panorama-canvas"
-                aria-label="Horizon panorama showing terrain silhouette, Sun and Earth tracks, and discs clipped by the horizon"
-              ></canvas>
-            </div>
-            <p id="pano-caption" class="pano-caption">
-              Azimuth 0 deg = away from the pole (outward), clockwise. Discs drawn at true vertical size; use Zoom for true shape.
-            </p>
+          <div class="pano-canvas-wrap">
+            <canvas
+              id="panorama-canvas"
+              aria-label="Horizon panorama showing terrain silhouette, Sun and Earth tracks, and discs clipped by the horizon"
+            ></canvas>
+          </div>
+          <p id="pano-caption" class="pano-caption">
+            Azimuth 0 deg = away from the pole (outward), clockwise. Discs drawn at true vertical size; use Zoom for true shape.
+          </p>
 
-            <div class="slider-row">
-              <div class="slider-controls">
-                <button id="step-prev-btn" type="button" class="btn btn-xs" aria-label="Previous time step">‹</button>
-                <button id="play-btn" type="button" class="btn btn-xs" aria-pressed="false">Play</button>
-                <button id="step-next-btn" type="button" class="btn btn-xs" aria-label="Next time step">›</button>
-              </div>
-              <input
-                id="time-slider"
-                class="time-slider"
-                type="range"
-                min="0"
-                max="100"
-                value="0"
-                aria-label="Simulation time step"
-              >
-              <span id="time-display" class="time-readout">—</span>
+          <div class="slider-row">
+            <div class="slider-controls">
+              <button id="step-prev-btn" type="button" class="btn btn-xs" aria-label="Previous time step">‹</button>
+              <button id="play-btn" type="button" class="btn btn-xs" aria-pressed="false">Play</button>
+              <button id="step-next-btn" type="button" class="btn btn-xs" aria-label="Next time step">›</button>
             </div>
+            <input
+              id="time-slider"
+              class="time-slider"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              aria-label="Simulation time step"
+            >
+            <span id="time-display" class="time-readout">—</span>
+          </div>
 
-            <div class="now-card" aria-live="polite">
-              <div>
-                <div class="now-stamp-label">Selected instant</div>
-                <div id="now-time" class="now-stamp-val">—</div>
-              </div>
-              <div class="now-body now-body-sun">
-                <span class="now-body-title">Sun disc visible</span>
-                <span id="now-sun-pct" class="now-body-pct">—</span>
-                <span id="now-sun-meta" class="now-body-meta">—</span>
-              </div>
-              <div class="now-body now-body-earth">
-                <span class="now-body-title">Earth disc visible</span>
-                <span id="now-earth-pct" class="now-body-pct">—</span>
-                <span id="now-earth-meta" class="now-body-meta">—</span>
-              </div>
+          <div class="now-card" aria-live="polite">
+            <div class="now-col-time">
+              <div class="now-stamp-label">Selected instant</div>
+              <div id="now-time" class="now-stamp-val">—</div>
             </div>
-          </section>
-
-          <!-- 5. Timeline Strips -->
-          <section class="panel" aria-label="Visibility timelines">
-            <div class="panel-head">
-              <h2 class="panel-title">Visibility Timeline Strips</h2>
-              <p class="panel-sub">Click or drag anywhere on a strip to jump the time slider</p>
+            <div class="now-body now-body-sun">
+              <span class="now-body-title">Sun disc visible</span>
+              <span id="now-sun-pct" class="now-body-pct">—</span>
+              <span id="now-sun-meta" class="now-body-meta">—</span>
             </div>
-
-            <div class="strips-grid">
-              <div class="strip-block">
-                <span class="strip-label"><span class="swatch swatch-sun"></span> Sun visible fraction</span>
-                <canvas
-                  id="sun-strip-canvas"
-                  class="strip-canvas"
-                  aria-label="Sun visible fraction timeline over selected period"
-                ></canvas>
-              </div>
-              <div class="strip-block">
-                <span class="strip-label"><span class="swatch swatch-earth"></span> Earth visible fraction (dashed line = 50% threshold)</span>
-                <canvas
-                  id="earth-strip-canvas"
-                  class="strip-canvas"
-                  aria-label="Earth visible fraction timeline over selected period"
-                ></canvas>
-              </div>
+            <div class="now-body now-body-earth">
+              <span class="now-body-title">Earth disc visible</span>
+              <span id="now-earth-pct" class="now-body-pct">—</span>
+              <span id="now-earth-meta" class="now-body-meta">—</span>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
+
+      <!-- 5. Timeline Strips -->
+      <section class="panel timeline-panel" aria-label="Visibility timelines">
+        <div class="panel-head">
+          <h2 class="panel-title">Visibility timelines</h2>
+        </div>
+
+        <div class="strips-grid">
+          <div class="strip-block">
+            <span class="strip-label"><span class="swatch swatch-sun"></span> Sun visible fraction</span>
+            <canvas
+              id="sun-strip-canvas"
+              class="strip-canvas"
+              aria-label="Sun visible fraction timeline over selected period"
+            ></canvas>
+          </div>
+          <div class="strip-block">
+            <span class="strip-label"><span class="swatch swatch-earth"></span> Earth visible fraction (dashed line = 50% threshold)</span>
+            <canvas
+              id="earth-strip-canvas"
+              class="strip-canvas"
+              aria-label="Earth visible fraction timeline over selected period"
+            ></canvas>
+          </div>
+        </div>
+      </section>
 
       <!-- 4. Period Metric Cards -->
       <section class="panel metrics-section" aria-label="Period summary metrics">
         <div class="panel-head">
-          <div>
-            <h2 class="panel-title">Period Summary Metrics</h2>
-            <p class="panel-sub">Evaluated across the selected start date and duration</p>
-          </div>
+          <h2 class="panel-title">Period summary metrics</h2>
           <button id="add-compare-btn" type="button" class="btn btn-primary">Add to comparison</button>
         </div>
 
         <div id="metrics-grid" class="metrics-grid"></div>
-        <p id="earth-note" class="info-note"></p>
+        <p id="earth-note" class="metric-footnote"></p>
       </section>
 
       <!-- 6. Comparison -->
       <section class="panel compare-section" aria-label="Side-by-side site comparison">
         <div class="panel-head">
-          <div>
-            <h2 class="panel-title">Site Comparison (up to 3 configurations)</h2>
-            <p class="panel-sub">Compare different sites, observer heights, or mission windows side by side</p>
-          </div>
+          <h2 class="panel-title">Site comparison</h2>
           <div class="compare-actions">
             <button id="clear-compare-btn" type="button" class="btn btn-xs" disabled>Clear all</button>
           </div>
         </div>
 
         <div id="compare-container"></div>
-        <p id="compare-tradeoff-note" class="info-note"></p>
+        <p id="compare-tradeoff-note" class="compare-footnote"></p>
       </section>
 
       <!-- 7. How This Works -->
-      <section id="how-this-works" class="panel" aria-label="Methodology, data sources, and limitations">
-        <div class="panel-head">
-          <h2 class="panel-title">How This Works</h2>
-          <p class="panel-sub">Offline precomputed terrain horizons paired with live topocentric ephemeris in your browser</p>
-        </div>
-
-        <div class="how-sources">
+      <details id="how-this-works" class="panel how-details">
+        <summary class="how-summary">Method, data sources and limitations</summary>
+        <div class="how-content">
+          <div class="how-sources">
           <p class="panel-sub" style="font-size: 0.88rem;">
             <strong>Data sources:</strong>
             LOLA <code>LDEM_80S_20MPP_ADJ</code> (20 m/px lunar South Polar digital elevation model) from NASA PGDA;
@@ -341,19 +322,13 @@
             </ul>
           </article>
         </div>
-      </section>
+        </div>
+      </details>
     </main>
 
     <footer class="site-footer">
-      <span>
-        Data credits: NASA LOLA (<code>LDEM_80S_20MPP_ADJ</code>, NASA PGDA) &amp; NASA NAIF SPICE
-        (<code>de440</code>, <code>moon_pa_de440</code>, <code>naif0012</code>, <code>MOON_ME</code>).
-      </span>
-      <span>
-        <a href="https://github.com/ahsanmunna/lunar-landing-site-navigator" target="_blank" rel="noopener noreferrer">
-          GitHub repository
-        </a>
-      </span>
+      <span>Data credits: NASA LOLA (<code>LDEM_80S_20MPP_ADJ</code>) &amp; NASA NAIF SPICE.</span>
+      <a href="https://github.com/ahsanmunna/lunar-landing-site-navigator" target="_blank" rel="noopener noreferrer">GitHub repository</a>
     </footer>
   </div>
 
